@@ -102,12 +102,12 @@
                                                 <h4 class="title">Shop By Categories</h4>
                                                 <ul class="dropdown-menu-list">
                                                     <li><a href="{% url 'mobilephone' %}">Mobile Phone <i class="fa fa-angle-right pull-right"></i></a></li>
-                                                    <li><a href="product.html">Tablet <i class="fa fa-angle-right pull-right"></i></a></li>
-                                                    <li><a href="product.html">Laptop <i class="fa fa-angle-right pull-right"></i></a></li>
-                                                    <li><a href="product.html">Desktop <i class="fa fa-angle-right pull-right"></i></a></li>
-                                                    <li><a href="product.html">TV <i class="fa fa-angle-right pull-right"></i></a></li>
-                                                    <li><a href="product.html">Speaker <i class="fa fa-angle-right pull-right"></i></a></li>
-                                                    <li><a href="product.html">Gadget <i class="fa fa-angle-right pull-right"></i></a></li>
+                                                    <li><a href="{% url 'tablets' %}">Tablet <i class="fa fa-angle-right pull-right"></i></a></li>
+                                                    <li><a href="{% url 'laptop' %}">Laptop <i class="fa fa-angle-right pull-right"></i></a></li>
+                                                    <li><a href="{% url 'desktop' %}">Desktop <i class="fa fa-angle-right pull-right"></i></a></li>
+                                                    <li><a href="{% url 'tv' %}">TV <i class="fa fa-angle-right pull-right"></i></a></li>
+                                                    <li><a href="{% url 'speaker' %}">Speaker <i class="fa fa-angle-right pull-right"></i></a></li>
+                                                    <li><a href="{% url 'gadget' %}">Gadget <i class="fa fa-angle-right pull-right"></i></a></li>
                                                 </ul>
                                             </div>
                                             <!-- END dropdown-menu-sidebar -->
@@ -185,7 +185,7 @@
                                         <li><a href="product.html">Gadget</a></li>
                                     </ul>
                                 </li>
-                                <li><a href="product.html">New Arrival</a></li>
+                                <li><a href="{% url 'products' %}">New Arrival</a></li>
                                 <li class="dropdown dropdown-hover">
                                     <a href="#" data-toggle="dropdown">
                                         Pages
@@ -278,22 +278,32 @@
                                     <div class="cart-footer">
                                         <div class="row row-space-10">
                                             <div class="col-xs-6">
-                                                <a href="checkout_cart.html" class="btn btn-default btn-block">View Cart</a>
+                                                <a href="{% url 'checkoutcart' %}" class="btn btn-default btn-block">View Cart</a>
                                             </div>
                                             <div class="col-xs-6">
-                                                <a href="checkout_cart.html" class="btn btn-inverse btn-block">Checkout</a>
+                                                <a href="{% url 'checkoutinfo' %}" class="btn btn-inverse btn-block">Checkout</a>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </li>
+                            {% if not request.user.is_authenticated %}
                             <li class="divider"></li>
                             <li>
-                                <a href="my_account.html">
+                                <a href="{% url 'register' %}">
                                     <img src="{% static 'assets/img/user-1.jpg' %}" class="user-img" alt="" />
-                                    <span class="hidden-md hidden-sm hidden-xs">Login / Register</span>
+                                    <span class="hidden-md hidden-sm hidden-xs">Login /  Register</span>
                                 </a>
                             </li>
+                            {% else %}
+                            <li class="divider"></li>
+                            <li>
+                                <a href="{% url 'logout' %}">
+                                    <img src="{% static 'assets/img/user-1.jpg' %}" class="user-img" alt="" />
+                                    <span class="hidden-md hidden-sm hidden-xs">Logout</span>
+                                </a>
+                            </li>
+                            {% endif %}
                         </ul>
                     </div>
                     <!-- END header-nav -->

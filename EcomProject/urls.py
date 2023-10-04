@@ -20,4 +20,5 @@ from shope import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('shope.urls')),
+    path('', include('shope.Api.urls')),
 ]
