@@ -1,11 +1,11 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView, FormView
+from django.views.generic import TemplateView, FormView, ListView
 from .forms import ContactForm, SignUpForm, LoginForm, ProductForm
 from django.contrib import messages
 from django.views import View
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
-
+from .models import Product
 
 # Create your views here.
 class HomeTemplate(TemplateView):
@@ -86,3 +86,57 @@ class AddProduct(FormView):
     def form_valid(self, form):
             form.save()
             return super().form_valid(form)
+class IphoneSe(ListView):
+    template_name = 'iphonese.html'
+
+    model = Product
+    context_object_name = 'iphone_listings'
+
+    def get_queryset(self):
+        # Define the 'parent' parameter you want to filter by
+        parent_param = 'Apple>IPhone'  # You can change this to any value you want
+
+        # Debugging: Print the 'parent_param' to check if it's correctly set
+        print("Parent Parameter:", parent_param)
+
+        # Filter products based on the selected 'parent' parameter
+        queryset = self.model.objects.filter(parent__title="Apple")
+
+        # Debugging: Print the resulting queryset to check its contents
+        print("Filtered QuerySet:", queryset)
+
+        return queryset
+class IphoneSecategry(ListView):
+    template_name = 'iphonese.html'
+
+    model = Product
+    context_object_name = 'categories'
+
+    def get_queryset(self):
+        category = self.kwargs.get('parent')
+        if category:
+            return self.model.objects.filter(parent=category)
+        else:
+            return self.model.objects.all()
+class AppleWatch(TemplateView):
+    template_name = 'applewatch.html'
+class AppleAccessories(TemplateView):
+    template_name = 'appleaccessories.html'
+class MacMini(TemplateView):
+    template_name = 'macmini.html'
+class MacPro(TemplateView):
+    template_name= 'macpro.html'
+
+class CategoryListView(ListView):
+    model = Product
+    template_name = 'index.html'
+    context_object_name = 'categories'
+
+    def get_queryset(self):
+        # Query the database for distinct categories
+        queryset = Product.objects.values('category').distinct()
+
+        print("Categories QuerySet:", queryset)  # Add this line for debugging
+        return queryset
+
+
