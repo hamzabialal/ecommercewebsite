@@ -36,22 +36,13 @@ class ProductForm(forms.ModelForm):
         model = Product
         fields = [
             'title',
-            'category',
-            'availability',
+            'in_stock',
             'warranty',
-            'display_description',
+            'description',
             'price',
-            'original_price',
-            'product_description',
 
-            'first_image',
+
+            'image',
             'parent',
             'is_active'
-
-        ]
-
-
-class ProductImageForm(forms.ModelForm):
-    class Meta:
-        model = ProductImage
-        fields = '__all__'
+            ]

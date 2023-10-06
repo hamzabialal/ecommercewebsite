@@ -1,18 +1,27 @@
 from django.contrib import admin
-from .models import ContactUs, Product, ProductImage
+from .models import ContactUs, Product, ProductImage, Category, ProductDescription
 
 
 @admin.register(ContactUs)
 class ContactAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'email', 'subject', 'message']
 
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title', 'category', 'availability', 'warranty', 'display_description', 'price', 'original_price', 'product_description','first_image', 'parent']
+    list_display = ['id', 'title', 'in_stock', 'warranty', 'description', 'price', 'image', 'parent', 'discount_percentage']
+
 
 @admin.register(ProductImage)
 class ProductImageAdmin(admin.ModelAdmin):
-    list_display  = ['id', 'image']
+    list_display = ['id', 'image']
 
 
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'description', 'is_active']
 
+
+@admin.register(ProductDescription)
+class ProductDescriptionAdmin(admin.ModelAdmin):
+    list_display = ['id', 'title', 'image']

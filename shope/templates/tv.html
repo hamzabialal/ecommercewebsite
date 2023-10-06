@@ -51,159 +51,28 @@
                         <!-- BEGIN search-item-container -->
                         <div class="search-item-container">
                             <!-- BEGIN item-row -->
-                            <div class="item-row">
                                 <!-- BEGIN item -->
-                                <div class="item item-thumbnail">
-                                    <a href="product-detail.html" class="item-image">
-                                        <img src="assets/img/iphone.png" alt="" />
-                                        <div class="discount">15% OFF</div>
-                                    </a>
-                                    <div class="item-info">
-                                        <h4 class="item-title">
-                                            <a href="product-detail.html">iPhone 6s Plus<br />16GB</a>
-                                        </h4>
-                                        <p class="item-desc">3D Touch. 12MP photos. 4K video.</p>
-                                        <div class="item-price">$649.00</div>
-                                        <div class="item-discount-price">$739.00</div>
-                                    </div>
-                                </div>
-                                <!-- END item -->
-                                <!-- BEGIN item -->
-                                <div class="item item-thumbnail">
-                                    <a href="product-detail.html" class="item-image">
-                                        <img src="assets/img/apple-tv.png" alt="" />
-                                        <div class="discount">32% OFF</div>
-                                    </a>
-                                    <div class="item-info">
-                                        <h4 class="item-title">
-                                            <a href="product.html">Apple TV<br />2016</a>
-                                        </h4>
-                                        <p class="item-desc">The future of television is here.</p>
-                                        <div class="item-price">$599.00</div>
-                                        <div class="item-discount-price">$799.00</div>
-                                    </div>
-                                </div>
-                                <!-- END item -->
-                                <!-- BEGIN item -->
-                                <div class="item item-thumbnail">
-                                    <a href="product-detail.html" class="item-image">
-                                        <img src="assets/img/iphone-se.png" alt="" />
-                                        <div class="discount">20% OFF</div>
-                                    </a>
-                                    <div class="item-info">
-                                        <h4 class="item-title">
-                                            <a href="product.html">iPhone SE<br />32/64Gb</a>
-                                        </h4>
-                                        <p class="item-desc">A big step for small.</p>
-                                        <div class="item-price">$499.00</div>
-                                        <div class="item-discount-price">$599.00</div>
-                                    </div>
-                                </div>
-                                <!-- END item -->
-                            </div>
-                            <!-- END item-row -->
+
                             <!-- BEGIN item-row -->
                             <div class="item-row">
                                 <!-- BEGIN item -->
+                                {% for product in tv %}
                                 <div class="item item-thumbnail">
                                     <a href="product-detail.html" class="item-image">
-                                        <img src="assets/img/apple-watch.png" alt="" />
+                                        <img src="{{ product.firs_image.url }}" alt="" />
                                         <div class="discount">15% OFF</div>
                                     </a>
                                     <div class="item-info">
                                         <h4 class="item-title">
-                                            <a href="product-detail.html">Apple Watch<br />‏Sport Edition</a>
+                                            <a href="product-detail.html"><{{ product.title }}br />‏Sport Edition</a>
                                         </h4>
-                                        <p class="item-desc">You. At a glance.</p>
-                                        <div class="item-price">$399.00</div>
-                                        <div class="item-discount-price">$453.00</div>
+                                        <p class="item-desc">{{ prodcut.product_description }}</p>
+                                        <div class="item-price">${{ product.price }}</div>
+                                        <div class="item-discount-price">${{ product.original_price }}</div>
                                     </div>
                                 </div>
                                 <!-- END item -->
-                                <!-- BEGIN item -->
-                                <div class="item item-thumbnail">
-                                    <a href="product-detail.html" class="item-image">
-                                        <img src="assets/img/imac.png" alt="" />
-                                        <div class="discount">32% OFF</div>
-                                    </a>
-                                    <div class="item-info">
-                                        <h4 class="item-title">
-                                            <a href="product.html">21.5-inch iMac<br />with Retina Display</a>
-                                        </h4>
-                                        <p class="item-desc">Retina. Now in colossal and ginormous.</p>
-                                        <div class="item-price">$599.00</div>
-                                        <div class="item-discount-price">$799.00</div>
-                                    </div>
-                                </div>
-                                <!-- END item -->
-                                <!-- BEGIN item -->
-                                <div class="item item-thumbnail">
-                                    <a href="product-detail.html" class="item-image">
-                                        <img src="assets/img/macbook-pro.png" alt="" />
-                                        <div class="discount">20% OFF</div>
-                                    </a>
-                                    <div class="item-info">
-                                        <h4 class="item-title">
-                                            <a href="product.html">MacBook Pro<br />with Retina Display</a>
-                                        </h4>
-                                        <p class="item-desc">Stunning Retina Display</p>
-                                        <div class="item-price">$99.00</div>
-                                        <div class="item-discount-price">$199.00</div>
-                                    </div>
-                                </div>
-                                <!-- END item -->
-                            </div>
-                            <!-- END item-row -->
-                            <!-- BEGIN item-row -->
-                            <div class="item-row">
-                                <!-- BEGIN item -->
-                                <div class="item item-thumbnail">
-                                    <a href="product-detail.html" class="item-image">
-                                        <img src="assets/img/ipad-pro.png" alt="" />
-                                        <div class="discount">15% OFF</div>
-                                    </a>
-                                    <div class="item-info">
-                                        <h4 class="item-title">
-                                            <a href="product-detail.html">9.7-inch iPad Pro<br />32GB</a>
-                                        </h4>
-                                        <p class="item-desc">3D Touch. 12MP photos. 4K video.</p>
-                                        <div class="item-price">$649.00</div>
-                                        <div class="item-discount-price">$739.00</div>
-                                    </div>
-                                </div>
-                                <!-- END item -->
-                                <!-- BEGIN item -->
-                                <div class="item item-thumbnail">
-                                    <a href="product-detail.html" class="item-image">
-                                        <img src="assets/img/mac-pro.png" alt="" />
-                                        <div class="discount">32% OFF</div>
-                                    </a>
-                                    <div class="item-info">
-                                        <h4 class="item-title">
-                                            <a href="product.html">Mac Pro<br />Quad-Core and Dual GPU</a>
-                                        </h4>
-                                        <p class="item-desc">Built for creativity on an epic scale.</p>
-                                        <div class="item-price">$2999.00</div>
-                                        <div class="item-discount-price">$2599.00</div>
-                                    </div>
-                                </div>
-                                <!-- END item -->
-                                <!-- BEGIN item -->
-                                <div class="item item-thumbnail">
-                                    <a href="product-detail.html" class="item-image">
-                                        <img src="assets/img/ipad-air.png" alt="" />
-                                        <div class="discount">20% OFF</div>
-                                    </a>
-                                    <div class="item-info">
-                                        <h4 class="item-title">
-                                            <a href="product.html">iPad Air 2<br />32/64Gb</a>
-                                        </h4>
-                                        <p class="item-desc">Light. Heavyweight.</p>
-                                        <div class="item-price">$399.00</div>
-                                        <div class="item-discount-price">$459.00</div>
-                                    </div>
-                                </div>
-                                <!-- END item -->
+
                             </div>
                             <!-- END item-row -->
                         </div>

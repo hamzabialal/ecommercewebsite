@@ -1,37 +1,56 @@
 from django.db import models
 
 # Create your models here.
-class ContactUs(models.Model):
-    name = models.CharField(max_length= 120)
-    email = models.EmailField(max_length = 120)
-    subject = models.TextField(max_length = 200)
-    message = models.TextField(max_length = 1000)
 
+
+class ContactUs(models.Model):
+    name = models.CharField(max_length=120)
+    email = models.EmailField(max_length=120)
+    subject = models.TextField(max_length=200)
+    message = models.TextField(max_length=1000)
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=250)
+    description = models.TextField()
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Product(models.Model):
     title = models.CharField(max_length=255)
-    category = models.CharField(max_length=255, blank=True)
-    availability = models.CharField(max_length=50)
-    warranty = models.IntegerField()
-    display_description = models.TextField()
+    in_stock = models.BooleanField(default=True)
+    warranty = models.PositiveIntegerField()
+    description = models.TextField()
     price = models.IntegerField()
-    original_price = models.IntegerField()
-    product_description = models.TextField()
-    first_image = models.ImageField(upload_to='shop/images', default="")
+    image = models.ImageField(upload_to='shop/images', default="")
     is_active = models.BooleanField(default=True)
     parent = models.ForeignKey(
-        "self", on_delete=models.CASCADE, related_name="parent_category", null=True, blank=True)
+        Category, on_delete=models.CASCADE, related_name="products", null=True, blank=True)
+    discount_percentage = models.FloatField(default=0)
+    is_featured = models.BooleanField(default=True)
 
     def __str__(self):
-        if self.parent and self.category:
-            return f"{self.parent}>{self.category}"
+        return self.title
 
-        elif self.category:
-            return self.category
-        else:
-            return ""
+    @property
+    def discounted_price(self):
+        # Calculate the discounted price based on the original price and discount percentage
+        discount_amount = (self.discount_percentage / 100) * self.price
+        discounted_price = self.price - discount_amount
+        return discounted_price
+
 
 class ProductImage(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name = "product_image")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="product_image")
     image = models.ImageField(upload_to='shop/images', default="")
+
+
+class ProductDescription(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="product_description", null=True, blank=True)
+    title = models.CharField(max_length=130, default="")
+    image = models.ImageField(upload_to='shop/images', default="")
+
+

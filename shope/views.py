@@ -5,11 +5,29 @@ from django.contrib import messages
 from django.views import View
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
-from .models import Product
+from .models import Product, Category
 
 # Create your views here.
-class HomeTemplate(TemplateView):
+class HomeTemplate(ListView):
     template_name = 'index.html'
+
+    def get_queryset(self):
+        # You can define a queryset here or return an empty queryset
+        return Product.objects.all()  # For example, fetching products
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Fetch data from the Category model
+        context['categories'] = Category.objects.all()
+
+        # Fetch data from the Product model
+        context['products'] = self.get_queryset()
+
+        return context
+
+
+
 class FaQsTemplate(TemplateView):
     template_name = 'faq.html'
 class ContactTemplate(FormView):
@@ -38,10 +56,18 @@ class ProductDetail(TemplateView):
     template_name = 'product_detail.html'
 class SearchResults(TemplateView):
     template_name = 'search_results.html'
-class MobilePhones(TemplateView):
-    template_name = 'mobile_phone.html'
-class Tablets(TemplateView):
-    template_name = 'tablets.html'
+# class MobilePhones(ListView):
+#     template_name = 'mobile_phone.html'
+#     model = Product
+#     context_object_name= 'mobile_phones'
+#     def get_queryset(self):
+#         return self.model.objects.filter(Major_category = 'Phones')
+# class Tablets(ListView):
+#     template_name = 'tablets.html'
+#     model = Product
+#     context_object_name = 'tablets'
+#     def get_queryset(self):
+#         return self.model.objects.filter(Major_category = 'Tablets')
 class Laptop(TemplateView):
     template_name = 'laptop.html'
 class Desktop(TemplateView):
@@ -88,24 +114,24 @@ class AddProduct(FormView):
             return super().form_valid(form)
 class IphoneSe(ListView):
     template_name = 'iphonese.html'
-
     model = Product
     context_object_name = 'iphone_listings'
 
     def get_queryset(self):
         # Define the 'parent' parameter you want to filter by
-        parent_param = 'Apple>IPhone'  # You can change this to any value you want
+        parent_param = 'Apple> I Phone'  # Note the spaces around the '>' symbol
 
         # Debugging: Print the 'parent_param' to check if it's correctly set
         print("Parent Parameter:", parent_param)
 
         # Filter products based on the selected 'parent' parameter
-        queryset = self.model.objects.filter(parent__title="Apple")
+        queryset = self.model.objects.filter(parent__category=parent_param)
 
         # Debugging: Print the resulting queryset to check its contents
         print("Filtered QuerySet:", queryset)
 
         return queryset
+
 class IphoneSecategry(ListView):
     template_name = 'iphonese.html'
 
@@ -127,16 +153,16 @@ class MacMini(TemplateView):
 class MacPro(TemplateView):
     template_name= 'macpro.html'
 
-class CategoryListView(ListView):
-    model = Product
-    template_name = 'index.html'
-    context_object_name = 'categories'
+# class CategoryListView(ListView):
+#     model = Product
+#     template_name = 'index.html'
+#     context_object_name = 'categories'
+#
+#     def get_queryset(self):
+#         # Query the database for distinct categories
+#         queryset = Product.objects.values('Major_category').distinct()
 
-    def get_queryset(self):
-        # Query the database for distinct categories
-        queryset = Product.objects.values('category').distinct()
-
-        print("Categories QuerySet:", queryset)  # Add this line for debugging
-        return queryset
-
-
+#         print("Categories QuerySet:", queryset)  # Add this line for debugging
+#         return queryset
+#
+#

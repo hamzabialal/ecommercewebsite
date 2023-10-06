@@ -15,8 +15,6 @@ urlpatterns = [
     path('products/', views.Products.as_view(), name= 'products'),
     path('productdetail/', views.ProductDetail.as_view(), name= 'product_detail'),
     path('searchresults/', views.SearchResults.as_view(), name= 'search_results'),
-    path('mobilephone/', views.MobilePhones.as_view(), name= 'mobilephone'),
-    path('tablets/', views.Tablets.as_view(), name='tablets'),
     path('laptop/', views.Laptop.as_view(), name= 'laptop'),
     path('desktop/', views.Desktop.as_view(), name= 'desktop'),
     path('tv/', views.TV.as_view(), name= 'tv'),
@@ -31,4 +29,5 @@ urlpatterns = [
     path('appleaccessories/', views.AppleAccessories.as_view(), name= 'appleaccessories'),
     path('macmini', views.MacMini.as_view(), name= 'macmini'),
     path('macpro/', views.MacPro.as_view(), name= 'macpro'),
+
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
