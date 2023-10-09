@@ -10,9 +10,17 @@ class ContactUs(models.Model):
     message = models.TextField(max_length=1000)
 
 
+class ParentCategory(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
 class Category(models.Model):
     name = models.CharField(max_length=250)
     description = models.TextField()
+    parent_category = models.ForeignKey(ParentCategory, on_delete=models.CASCADE, related_name='parent_category', null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -24,20 +32,20 @@ class Product(models.Model):
     in_stock = models.BooleanField(default=True)
     warranty = models.PositiveIntegerField()
     description = models.TextField()
-    price = models.IntegerField()
+    price = models.DecimalField(max_digits=10, decimal_places=0)
     image = models.ImageField(upload_to='shop/images', default="")
     is_active = models.BooleanField(default=True)
     parent = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name="products", null=True, blank=True)
-    discount_percentage = models.FloatField(default=0)
+    discount_percentage = models.DecimalField(max_digits=10, decimal_places=0,default=0)
     is_featured = models.BooleanField(default=True)
+    arrival = models.BooleanField(default='')
 
     def __str__(self):
         return self.title
 
     @property
     def discounted_price(self):
-        # Calculate the discounted price based on the original price and discount percentage
         discount_amount = (self.discount_percentage / 100) * self.price
         discounted_price = self.price - discount_amount
         return discounted_price
@@ -51,6 +59,7 @@ class ProductImage(models.Model):
 class ProductDescription(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="product_description", null=True, blank=True)
     title = models.CharField(max_length=130, default="")
+    description = models.TextField(blank=True)
     image = models.ImageField(upload_to='shop/images', default="")
 
 

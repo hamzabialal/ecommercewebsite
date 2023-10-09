@@ -53,19 +53,19 @@
                             <!-- BEGIN item-row -->
                             <div class="item-row">
     <!-- BEGIN item -->
-                                {% for product in iphone_listings %}
+                                {% for product in iphone_watch_listings %}
                                 <div class="item item-thumbnail">
                                     <a href="product-detail.html" class="item-image">
-                                        <img src="{{ product.first_image.url }}" alt="{{ product.title }}" />
-                                        <div class="discount">15% OFF</div>
+                                        <img src="{{ product.image.url }}" alt="{{ product.title }}" />
+                                        <div class="discount">{{product.discount_percentage}}% OFF</div>
                                     </a>
                                     <div class="item-info">
                                         <h4 class="item-title">
                                             <a href="product-detail.html">{{ product.title }}</a>
                                         </h4>
-                                        <p class="item-desc">{{ product.product_description }}</p>
-                                        <div class="item-price">${{ product.price }}</div>
-                                        <div class="item-discount-price">${{ product.original_price }}</div>
+                                        <p class="item-desc">{{ product.description }}</p>
+                                        <div class="item-price">${{ product.discounted_price }}</div>
+                                        <div class="item-discount-price">${{ product.price }}</div>
                                     </div>
                                 </div>
                                 <!-- END item -->

@@ -101,8 +101,8 @@
                                             <div class="dropdown-menu-sidebar">
                                                 <h4 class="title">Shop By Categories</h4>
                                                 <ul class="dropdown-menu-list">
-                                                    {% for i in category %}
-                                                    <li><a href="/">{{i.name}}<i class="fa fa-angle-right pull-right"></i></a></li>
+                                                    {% for i in categories %}
+                                                    <li><a href="{% url 'category_detail' category_name=i.name %}">{{i.name}}<i class="fa fa-angle-right pull-right"></i></a></li>
                                                     {% endfor %}
                                                 </ul>
                                             </div>
@@ -172,16 +172,12 @@
                                         <span class="arrow top"></span>
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li><a href="product.html">Mobile Phone</a></li>
-                                        <li><a href="product.html">Tablet</a></li>
-                                        <li><a href="product.html">TV</a></li>
-                                        <li><a href="product.html">Desktop</a></li>
-                                        <li><a href="product.html">Laptop</a></li>
-                                        <li><a href="product.html">Speaker</a></li>
-                                        <li><a href="product.html">Gadget</a></li>
+                                        {% for i in parent_categories %}
+                                        <li><a href="{% url 'products' category_name=i.name %}">{{i.name}}</a></li>
+                                        {% endfor %}
                                     </ul>
                                 </li>
-                                <li><a href="{% url 'products' %}">New Arrival</a></li>
+                                <li><a href="{% url 'arrivalproducts' %}">New Arrival</a></li>
                                 <li class="dropdown dropdown-hover">
                                     <a href="#" data-toggle="dropdown">
                                         Pages
@@ -191,7 +187,7 @@
                                     <ul class="dropdown-menu">
                                         <li><a href="/">Home (Default)</a></li>
                                         <li><a href="{% url 'search_results' %}">Search Results</a></li>
-                                        <li><a href="{% url 'products' %}">Product Page</a></li>
+                                        <li><a href="/">Product Page</a></li>
                                         <li><a href="{% url 'product_detail' %}">Product Details Page</a></li>
                                         <li><a href="{% url 'checkoutcart' %}">Checkout Cart</a></li>
                                         <li><a href="{% url 'checkoutinfo' %}">Checkout Shipping</a></li>
@@ -209,9 +205,9 @@
                                         <span class="arrow top"></span>
                                     </a>
                                     <div class="dropdown-menu p-15">
-                                        <form action="search_results.html" method="POST" name="search_form">
+                                        <form action="{% url 'search_results' %}" method="GET" name="search_form">
                                             <div class="input-group">
-                                                <input type="text" placeholder="Search" class="form-control bg-silver-lighter" />
+                                                <input type="text" name="q" placeholder="Search" class="form-control bg-silver-lighter" value="{{ query }}">
                                                 <span class="input-group-btn">
                                                     <button class="btn btn-inverse" type="submit"><i class="fa fa-search"></i></button>
                                                 </span>

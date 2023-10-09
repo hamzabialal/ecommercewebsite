@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ContactUs, Product, ProductImage, Category, ProductDescription
+from .models import ContactUs, Product, ProductImage, Category, ProductDescription, ParentCategory
 
 
 @admin.register(ContactUs)
@@ -9,7 +9,7 @@ class ContactAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title', 'in_stock', 'warranty', 'description', 'price', 'image', 'parent', 'discount_percentage']
+    list_display = ['id', 'title', 'in_stock', 'warranty', 'description', 'price', 'image', 'parent', 'discount_percentage', 'arrival']
 
 
 @admin.register(ProductImage)
@@ -25,3 +25,8 @@ class CategoryAdmin(admin.ModelAdmin):
 @admin.register(ProductDescription)
 class ProductDescriptionAdmin(admin.ModelAdmin):
     list_display = ['id', 'title', 'image']
+
+
+@admin.register(ParentCategory)
+class ParentCategoryAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name']

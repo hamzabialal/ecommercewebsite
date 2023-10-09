@@ -31,7 +31,7 @@
                         </div>
                         <div class="carousel-caption carousel-caption-right">
                             <div class="container">
-                                <h3 class="title m-b-5 fadeInRightBig animated">iPhone 6s</h3> 
+                                <h3 class="title m-b-5 fadeInRightBig animated">iPhone 6s</h3>
                                 <p class="m-b-15 fadeInRightBig animated">The only thing that’s changed is everything</p>
                                 <div class="price m-b-30 fadeInRightBig animated"><small>from</small> <span>$1,299.00</span></div>
                                 <a href="{% url 'iphonese' %}" class="btn btn-outline btn-lg fadeInRightBig animated">Buy Now</a>
@@ -44,7 +44,7 @@
                         <img src="{% static 'assets/img/slider-3-cover.jpg' %}" class="bg-cover-img" alt="" />
                         <div class="carousel-caption">
                             <div class="container">
-                                <h3 class="title m-b-5 fadeInDownBig animated">Macbook Air</h3> 
+                                <h3 class="title m-b-5 fadeInDownBig animated">Macbook Air</h3>
                                 <p class="m-b-15 fadeInDownBig animated">Thin.Light.Powerful.<br />And ready for anything</p>
                                 <div class="price fadeInDownBig animated"><small>from</small> <span>$999.00</span></div>
                                 <a href="#" class="btn btn-outline btn-lg fadeInUpBig animated">Buy Now</a>
@@ -182,17 +182,17 @@
                     <div class="col-md-2 col-sm-4">
                         <!-- BEGIN item -->
                         <div class="item item-thumbnail">
-                            <a href="/" class="item-image">
-                                <img src="{{ item.first_image.url }}" alt="" />
-                                <div class="discount">15% OFF</div>
+                            <a href="{% url 'product_detail' product_name=item.title %}" class="item-image">
+                                <img src="{{ item.image.url }}" alt="" />
+                                <div class="discount">{{ item.discount_percentage }} %OFF</div>
                             </a>
                             <div class="item-info">
                                 <h4 class="item-title">
-                                    <a href="/">{{ item.title }}</a>
+                                    <a href="{% url 'product_detail' product_name=item.title %}">{{ item.title }}</a>
                                 </h4>
-                                <p class="item-desc">{{ item.product_description }}</p>
-                                <div class="item-price">${{ item.price }}</div>
-                                <div class="item-discount-price">${{ item.original_price }}</div>
+                                <p class="item-desc">{{ item.description }}</p>
+                                <div class="item-price">${{ item.discounted_price }}</div>
+                                <div class="item-discount-price">${{ item.price }}</div>
                             </div>
                         </div>
                         <!-- END item -->
@@ -223,10 +223,11 @@
                     <div class="category-sidebar">
                        <ul class="category-list">
                         <li class="list-header">Top Categories</li>
-                        {% for category in categories %}
-                        <li><a href="/">{{ category.category }}</a></li>
-                        {% endfor %}
                         <li><a href="#">All Brands</a></li>
+
+                        {% for category in categories %}
+                        <li><a href="/">{{ category.name }}</a></li>
+                        {% endfor %}
                     </ul>
 
                     </div>
@@ -253,17 +254,17 @@
                             <!-- BEGIN item-row -->
                             <div class="item-row">
     <!-- BEGIN item -->
-                                {% for product in products %}
+                                {% for product in phones %}
                                 <div class="item item-thumbnail">
-                                    <a href="product-detail.html" class="item-image">
+                                    <a href="{% url 'product_detail' product_name=product.title %}" class="item-image">
                                         <img src="{{ product.image.url }}" alt="{{ product.title }}" />
                                         <div class="discount">{{product.discount_percentage}}%</div>
                                     </a>
                                     <div class="item-info">
                                         <h4 class="item-title">
-                                            <a href="product-detail.html">{{ product.title }}</a>
+                                            <a href="{% url 'product_detail' product_name=product.title %}">{{ product.title }}</a>
                                         </h4>
-                                        <p class="item-desc">{{ product.product_description }}</p>
+                                        <p class="item-desc">{{ product.description }}</p>
                                         <div class="item-price">${{ product.discounted_price }}</div>
                                         <div class="item-discount-price">${{ product.price }}</div>
                                     </div>
@@ -337,17 +338,17 @@
 
                                 <div class="item item-thumbnail">
 
-                                    <a href="product-detail.html" class="item-image">
-                                        <img src="{{ product.first_image.url }}" alt="{{ product.title }}" />
-                                        <div class="discount">15% OFF</div>
+                                    <a href="{% url 'product_detail' product_name=product.title %}" class="item-image">
+                                        <img src="{{ product.image.url }}" alt="{{ product.title }}" />
+                                        <div class="discount">{{product.discount_percentage}} %OFF</div>
                                     </a>
                                     <div class="item-info">
                                         <h4 class="item-title">
-                                            <a href="product-detail.html">{{ product.title }}</a>
+                                            <a href="{% url 'product_detail' product_name=product.title %}">{{ product.title }}</a>
                                         </h4>
-                                        <p class="item-desc">{{ product.product_description }}</p>
-                                        <div class="item-price">${{ product.price }}</div>
-                                        <div class="item-discount-price">${{ product.original_price }}</div>
+                                        <p class="item-desc">{{ product.description }}</p>
+                                        <div class="item-price">${{ product.discounted_price }}</div>
+                                        <div class="item-discount-price">${{ product.price }}</div>
                                     </div>
 
                                 </div>

@@ -6,12 +6,14 @@
         <div id="page-header" class="section-container page-header-container bg-black">
             <!-- BEGIN page-header-cover -->
             <div class="page-header-cover">
-                <img src="assets/img/apple-cover.jpg" alt="" />
+                <img src="{% static 'assets/img/apple-cover.jpg' %}" alt="" />
             </div>
             <!-- END page-header-cover -->
             <!-- BEGIN container -->
             <div class="container">
-                <h1 class="page-header"><b>Mac</b> Mini</h1>
+                {% for product in products%}
+                <h1 class="page-header"><b>{{ product.parent.name }}</b></h1>
+                {% endfor %}
             </div>
             <!-- END container -->
         </div>
@@ -51,17 +53,20 @@
                         <!-- BEGIN search-item-container -->
                         <div class="search-item-container">
                             <!-- BEGIN item-row -->
+                                <!-- BEGIN item -->
+
+                            <!-- BEGIN item-row -->
                             <div class="item-row">
-    <!-- BEGIN item -->
-                                {% for product in iphone_watch_listings %}
+                                <!-- BEGIN item -->
+                                {% for product in products %}
                                 <div class="item item-thumbnail">
-                                    <a href="product-detail.html" class="item-image">
-                                        <img src="{{ product.image.url }}" alt="{{ product.title }}" />
-                                        <div class="discount">{{product.discount_percentage}}% OFF</div>
+                                    <a href="{% url 'product_detail' product_name=product.title %}" class="item-image">
+                                        <img src="{{ product.image.url }}" alt="" />
+                                        <div class="discount">{{ product.discount_percentage }}</div>
                                     </a>
                                     <div class="item-info">
                                         <h4 class="item-title">
-                                            <a href="product-detail.html">{{ product.title }}</a>
+                                            <a href="{% url 'product_detail' product_name=product.title %}">{{ product.title }}</a>
                                         </h4>
                                         <p class="item-desc">{{ product.description }}</p>
                                         <div class="item-price">${{ product.discounted_price }}</div>
@@ -71,10 +76,6 @@
                                 <!-- END item -->
                                 {% endfor %}
                             </div>
-
-                            <!-- END item-row -->
-                            <!-- BEGIN item-row -->
-
                             <!-- END item-row -->
                         </div>
                         <!-- END search-item-container -->
@@ -118,10 +119,13 @@
                             </div>
                         </form>
                         <h4 class="title m-b-0">Categories</h4>
-                       <ul class="search-category-list">
-                            {% for category in categories %}
-                            <li><a href="#">{{ category.name }} <span class="pull-right">({{ category.products.count }})</span></a></li>
-                            {% endfor %}
+                        <ul class="search-category-list">
+                            <li><a href="#">iPhone <span class="pull-right">(10)</span></a></li>
+                            <li><a href="#">Mac <span class="pull-right">(15)</span></a></li>
+                            <li><a href="#">iPad <span class="pull-right">(32)</span></a></li>
+                            <li><a href="#">Watch <span class="pull-right">(4)</span></a></li>
+                            <li><a href="#">TV <span class="pull-right">(6)</span></a></li>
+                            <li><a href="#">Accessories <span class="pull-right">(38)</span></a></li>
                         </ul>
                     </div>
                     <!-- END search-sidebar -->
