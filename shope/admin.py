@@ -24,7 +24,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(ProductDescription)
 class ProductDescriptionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title', 'image']
+    list_display = ['id', 'title', 'image', 'description']
 
 
 @admin.register(ParentCategory)

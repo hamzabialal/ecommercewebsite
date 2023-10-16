@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, FormView, ListView
-from .forms import ContactForm, SignUpForm, LoginForm, ProductForm
+from .forms import ContactForm, SignUpForm, LoginForm, ProductForm,ShippingAddressForm,CardNumberForm
 from django.contrib import messages
 from django.views import View
 from django.http import HttpResponseRedirect
@@ -8,6 +8,10 @@ from django.contrib.auth import authenticate, login, logout
 from .models import Product, Category, ParentCategory
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from django.shortcuts import redirect
+
+from .models import Product
+
 
 
 # Create your views here.
@@ -85,8 +89,7 @@ class ContactTemplate(FormView):
         return super().form_valid(form)
 
 
-class CheckOutPayment(TemplateView):
-    template_name = 'checkout_payment.html'
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -94,6 +97,8 @@ class CheckOutPayment(TemplateView):
         context['categories'] = Category.objects.all()
         return context
 
+    def post(self, request, *args, **kwargs):
+        return super(CheckOutPayment, self).get(request, *args, **kwargs)
 
 class CheckOutInfo(TemplateView):
     template_name = 'checkout_info.html'
@@ -115,14 +120,6 @@ class CheckOutComplete(TemplateView):
         return context
 
 
-class CheckOutCart(TemplateView):
-    template_name = 'checkout_cart.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['parent_categories'] = ParentCategory.objects.all()
-        context['categories'] = Category.objects.all()
-        return context
 
 
 class AboutUs(TemplateView):
@@ -166,7 +163,14 @@ class ProductDetail(TemplateView):
         product_name = kwargs['product_name']
         product = get_object_or_404(Product, title=product_name)
         context['product'] = product
+        context['featured_products'] = Product.objects.filter(is_featured=True)
+        context['parent_categories'] = ParentCategory.objects.all()
+        context['categories'] = Category.objects.all()
         return context
+
+
+
+
 
 
 class SearchView(ListView):
@@ -289,7 +293,6 @@ class Logout(View):
         return HttpResponseRedirect('/')
 
 
-
 class AddProduct(FormView):
     template_name = 'addproduct.html'
     form_class = ProductForm
@@ -318,7 +321,6 @@ class IphoneSe(ListView):
         context['parent_categories'] = ParentCategory.objects.all()
         context['categories'] = Category.objects.all()
         return context
-
 
 
 class IphoneSecategry(ListView):
@@ -426,3 +428,112 @@ class ArrivalProducts(ListView):
         context['parent_categories'] = ParentCategory.objects.all()
         context['categories'] = Category.objects.all()
         return context
+
+
+class ShippingForm(FormView):
+    template_name = 'checkout_info.html'
+    form_class = ShippingAddressForm
+    success_url = '/checkoutpayment/'
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+
+class CheckOutPayment(FormView):
+    template_name = 'checkout_payment.html'
+    form_class = CardNumberForm
+    success_url = '/checkoutcomplete/'
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+
+class AddToCartView(View):
+    def get(self, request, product_id):
+        product = Product.objects.get(pk=product_id)
+
+        if 'cart' not in request.session:
+            request.session['cart'] = {}
+
+        cart = request.session['cart']
+        cart_item = cart.get(str(product_id), {'product': product, 'quantity': 0})
+        cart_item['quantity'] += 1
+        cart[str(product_id)] = cart_item
+        request.session.modified = True
+
+        return redirect('checkoutcart')
+
+    def post(self, request, product_id):
+        product = Product.objects.get(pk=product_id)
+
+        if 'cart' not in request.session:
+            request.session['cart'] = {}
+
+        cart = request.session['cart']
+        cart_item = cart.get(str(product_id), {'product': product, 'quantity': 0})
+        cart_item['quantity'] += 1
+        cart[str(product_id)] = cart_item
+        request.session.modified = True
+
+        return redirect('checkoutcart')
+
+class CheckOutCart(TemplateView):
+    template_name = 'checkout_cart.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        cart = self.request.session.get('cart', {})
+
+        item_total = {}
+        cart_total = 0
+
+        for product_id, cart_item in cart.items():
+            try:
+                product = Product.objects.get(pk=product_id)
+                item_total[product_id] = cart_item['quantity'] * product.price
+                cart_total += item_total[product_id]
+                cart_item['product'] = product  # Attach the product to the cart_item
+                cart_item['total'] = item_total[product_id]
+            except Product.DoesNotExist:
+                # Handle the case where the product doesn't exist
+                cart_item['product'] = None  # Attach None for missing products
+                cart_item['total'] = 0
+
+            context['cart'] = cart
+            context['cart_total'] = cart_total
+
+        context['parent_categories'] = ParentCategory.objects.all()
+        context['categories'] = Category.objects.all()
+
+        return context
+
+def increase_quantity(request, product_id):
+    # Retrieve the cart from the session
+    cart = request.session.get('cart', {})
+    cart_item = cart.get(str(product_id))
+
+    if cart_item and cart_item['quantity'] < 10:  # You mentioned a max limit of 10
+        cart_item['quantity'] += 1
+        request.session['cart'] = cart
+
+    return redirect('checkoutcart')
+
+def decrease_quantity(request, product_id):
+    # Retrieve the cart from the session
+    cart = request.session.get('cart', {})
+    cart_item = cart.get(str(product_id))
+
+    if cart_item and cart_item['quantity'] > 1:
+        cart_item['quantity'] -= 1
+        request.session['cart'] = cart
+
+    return redirect('checkoutcart')
+
+
+
+
+
+

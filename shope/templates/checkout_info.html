@@ -7,7 +7,8 @@
             <div class="container">
                 <!-- BEGIN checkout -->
                 <div class="checkout">
-                    <form action="checkout_payment.html" method="POST" name="form_shipping" class="form-horizontal">
+                    <form action="{% url 'checkoutpayment' %}" method="POST" name="form_shipping" class="form-horizontal">
+                        {% csrf_token %}
                         <!-- BEGIN checkout-header -->
                         <div class="checkout-header">
                             <!-- BEGIN row -->
@@ -107,7 +108,7 @@
                                     Primary Phone <span class="text-danger">*</span>
                                 </label>
                                 <div class="col-md-4">
-                                    <input type="text" class="form-control" name="primary_phone" value="" placeholder="" />
+                                    <input type="text" class="form-control" name="primary_field" value="" placeholder="" />
                                 </div>
                             </div>
                             <div class="form-group">
@@ -115,7 +116,7 @@
                                     Street Address <span class="text-danger">*</span>
                                 </label>
                                 <div class="col-md-4">
-                                    <input type="text" class="form-control m-b-10" name="address_1" value="" placeholder="" />
+                                    <input type="text" class="form-control m-b-10" name="street_address" value="" placeholder="" />
                                     <input type="text" class="form-control" name="address_2" value="" placeholder="" />
                                 </div>
                             </div>
@@ -142,7 +143,8 @@
                                     </label>
                                 </div>
                             </div>
-                            <hr />
+                        </div>
+                                                    <hr />
                             <div class="m-b-5"><b>Shipping Policy</b></div>
                             <ul class="checkout-info-list">
                                 <li>Signature may be required for delivery</li>

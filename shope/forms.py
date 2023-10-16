@@ -1,5 +1,5 @@
 from django import forms
-from .models import ContactUs, Product, ProductImage
+from .models import ContactUs, Product, ProductImage,ShippingAddress, CardInformation
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.forms import inlineformset_factory
@@ -46,3 +46,25 @@ class ProductForm(forms.ModelForm):
             'parent',
             'is_active'
             ]
+
+
+class ShippingAddressForm(forms.ModelForm):
+    class Meta:
+        model = ShippingAddress
+        fields = '__all__'
+
+
+class CardNumberForm(forms.ModelForm):
+    class Meta:
+        model = CardInformation
+        fields = '__all__'
+
+class ExpirationDateForm(forms.Form):
+    expiration_month = forms.ChoiceField(choices=[(str(month), month) for month in range(1, 13)])
+    expiration_year = forms.ChoiceField(choices=[(str(year), year) for year in range(22, 31)])  # Adjust the range as needed
+
+
+
+
+
+

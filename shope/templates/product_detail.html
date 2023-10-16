@@ -89,8 +89,10 @@
                                 <div class="product-price">
                                     <div class="price">$ {{product.discounted_price }}</div>
                                 </div>
-                                <button class="btn btn-inverse btn-lg" type="submit">ADD TO CART</button>
-                            </div>
+
+                                    <button type="submit" value="{{product.id}}">Add to Cart</button>
+
+                                </div>
                             <!-- END product-purchase-container -->
                         </div>
                         <!-- END product-info -->
@@ -440,114 +442,29 @@
                 
                 <!-- BEGIN similar-product -->
                 <h4 class="m-b-15 m-t-30">You Might Also Like</h4>
-                <div class="row row-space-10">
-                    <div class="col-md-2 col-sm-4">
-                        <!-- BEGIN item -->
-                        <div class="item item-thumbnail">
-                            <a href="product_detail.html" class="item-image">
-                                <img src="assets/img/iphone.png" alt="">
-                                <div class="discount">15% OFF</div>
-                            </a>
-                            <div class="item-info">
-                                <h4 class="item-title">
-                                    <a href="product_detail.html">iPhone 6s Plus<br>16GB</a>
-                                </h4>
-                                <p class="item-desc">3D Touch. 12MP photos. 4K video.</p>
-                                <div class="item-price">$649.00</div>
-                                <div class="item-discount-price">$739.00</div>
-                            </div>
-                        </div>
-                        <!-- END item -->
-                    </div>
-                    <div class="col-md-2 col-sm-4">
-                        <!-- BEGIN item -->
-                        <div class="item item-thumbnail">
-                            <a href="product_detail.html" class="item-image">
-                                <img src="assets/img/samsung-note5.png" alt="">
-                                <div class="discount">32% OFF</div>
-                            </a>
-                            <div class="item-info">
-                                <h4 class="item-title">
-                                    <a href="product.html">Samsung Galaxy Note 5<br>Black</a>
-                                </h4>
-                                <p class="item-desc">Super. Computer. Now in two sizes.</p>
-                                <div class="item-price">$599.00</div>
-                                <div class="item-discount-price">$799.00</div>
-                            </div>
-                        </div>
-                        <!-- END item -->
-                    </div>
-                    <div class="col-md-2 col-sm-4">
-                        <!-- BEGIN item -->
-                        <div class="item item-thumbnail">
-                            <a href="product_detail.html" class="item-image">
-                                <img src="assets/img/iphone-se.png" alt="">
-                                <div class="discount">20% OFF</div>
-                            </a>
-                            <div class="item-info">
-                                <h4 class="item-title">
-                                    <a href="product.html">iPhone SE<br>32/64Gb</a>
-                                </h4>
-                                <p class="item-desc">A big step for small.</p>
-                                <div class="item-price">$499.00</div>
-                                <div class="item-discount-price">$599.00</div>
-                            </div>
-                        </div>
-                        <!-- END item -->
-                    </div>
-                    <div class="col-md-2 col-sm-4">
-                        <!-- BEGIN item -->
-                        <div class="item item-thumbnail">
-                            <a href="product_detail.html" class="item-image">
-                                <img src="assets/img/zenfone2.png" alt="">
-                                <div class="discount">15% OFF</div>
-                            </a>
-                            <div class="item-info">
-                                <h4 class="item-title">
-                                    <a href="product_detail.html">Assus ZenFone 2<br>‏(ZE550ML)</a>
-                                </h4>
-                                <p class="item-desc">See What Others Can’t See</p>
-                                <div class="item-price">$399.00</div>
-                                <div class="item-discount-price">$453.00</div>
-                            </div>
-                        </div>
-                        <!-- END item -->
-                    </div>
-                    <div class="col-md-2 col-sm-4">
-                        <!-- BEGIN item -->
-                        <div class="item item-thumbnail">
-                            <a href="product_detail.html" class="item-image">
-                                <img src="assets/img/xperia-z.png" alt="">
-                                <div class="discount">32% OFF</div>
-                            </a>
-                            <div class="item-info">
-                                <h4 class="item-title">
-                                    <a href="product.html">Sony Xperia Z<br>Black Color</a>
-                                </h4>
-                                <p class="item-desc">For unexpectedly beautiful moments</p>
-                                <div class="item-price">$599.00</div>
-                                <div class="item-discount-price">$799.00</div>
-                            </div>
-                        </div>
-                        <!-- END item -->
-                    </div>
-                    <div class="col-md-2 col-sm-4">
-                        <!-- BEGIN item -->
-                        <div class="item item-thumbnail">
-                            <a href="product_detail.html" class="item-image">
-                                <img src="assets/img/lumia-532.png" alt="">
-                                <div class="discount">20% OFF</div>
-                            </a>
-                            <div class="item-info">
-                                <h4 class="item-title">
-                                    <a href="product.html">Microsoft Lumia 531<br>Smartphone Orange</a>
-                                </h4>
-                                <p class="item-desc">1 Year Local Manufacturer Warranty</p>
-                                <div class="item-price">$99.00</div>
-                                <div class="item-discount-price">$199.00</div>
-                            </div>
-                        </div>
-                        <!-- END item -->
+                    <div class="row row-space-10">
+                                    {% for item in featured_products %}
+                                        <!-- BEGIN col-2 -->
+                                        <div class="col-md-2 col-sm-4">
+                                            <!-- BEGIN item -->
+                                            <div class="item item-thumbnail">
+                                                <a href="{% url 'product_detail' product_name=item.title %}" class="item-image">
+                                                    <img src="{{ item.image.url }}" alt="" />
+                                                    <div class="discount">{{ item.discount_percentage }} %OFF</div>
+                                                </a>
+                                                <div class="item-info">
+                                                    <h4 class="item-title">
+                                                        <a href="{% url 'product_detail' product_name=item.title %}">{{ item.title }}</a>
+                                                    </h4>
+                                                    <p class="item-desc">{{ item.description }}</p>
+                                                    <div class="item-price">${{ item.discounted_price }}</div>
+                                                    <div class="item-discount-price">${{ item.price }}</div>
+                                                </div>
+                                            </div>
+                                            <!-- END item -->
+                                        </div>
+                                        <!-- END col-2 -->
+                                    {% endfor %}
                     </div>
                 </div>
                 <!-- END similar-product -->

@@ -189,10 +189,10 @@
                                         <li><a href="{% url 'search_results' %}">Search Results</a></li>
                                         <li><a href="/">Product Page</a></li>
                                         <li><a href="{% url 'product_detail' %}">Product Details Page</a></li>
-                                        <li><a href="{% url 'checkoutcart' %}">Checkout Cart</a></li>
+                                        <li><a href="/">Checkout Cart</a></li>
                                         <li><a href="{% url 'checkoutinfo' %}">Checkout Shipping</a></li>
                                         <li><a href="{% url 'checkoutpayment' %}">Checkout Payment</a></li>
-                                        <li><a href="{% url 'checkoutcomplete' %}">Checkout Complete</a></li>
+                                        <li><a href="/">Checkout Complete</a></li>
                                         <li><a href="{% url 'myaccount' %}">My Account</a></li>
                                         <li><a href="{% url 'contact_template' %}">Contact Us</a></li>
                                         <li><a href="{% url 'aboutus' %}">About Us</a></li>
@@ -270,7 +270,7 @@
                                     <div class="cart-footer">
                                         <div class="row row-space-10">
                                             <div class="col-xs-6">
-                                                <a href="{% url 'checkoutcart' %}" class="btn btn-default btn-block">View Cart</a>
+                                                <a href="/" class="btn btn-default btn-block">View Cart</a>
                                             </div>
                                             <div class="col-xs-6">
                                                 <a href="{% url 'checkoutinfo' %}" class="btn btn-inverse btn-block">Checkout</a>
@@ -449,6 +449,8 @@
 	<![endif]-->
 	<script src="{% static 'assets/plugins/jquery-cookie/jquery.cookie.js' %}"></script>
 	<script src="{% static 'assets/js/apps.min.js' %}"></script>
+    <script src="{% static 'assets/js/My.js' %}"></script>
+
 	<!-- ================== END BASE JS ================== -->
 
 	<script>

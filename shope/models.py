@@ -1,5 +1,8 @@
-from django.db import models
+import uuid
 
+from django.db import models
+from django.contrib.auth.models import User
+import uuid
 # Create your models here.
 
 
@@ -61,5 +64,29 @@ class ProductDescription(models.Model):
     title = models.CharField(max_length=130, default="")
     description = models.TextField(blank=True)
     image = models.ImageField(upload_to='shop/images', default="")
+
+
+class ShippingAddress(models.Model):
+    first_name = models.CharField(max_length=70)
+    last_name = models.CharField(max_length=70)
+    company_name = models.CharField(max_length=67, blank=True)
+    area_code = models.CharField(max_length=5)
+    primary_field = models.CharField(max_length=20)
+    street_address = models.CharField(max_length=300)
+    zip_code = models.CharField(max_length=13)
+    business_address = models.BooleanField()
+
+
+class CardInformation(models.Model):
+    cardholder_name = models.CharField(max_length=200)
+    card_number = models.CharField(max_length=16)
+    payment_types = models.CharField(max_length=200)
+    expiration_data = models.CharField(max_length=200)
+    csc = models.CharField(max_length=3)
+
+class OrderUpdate(models.Model):
+    update_id = models.AutoField(primary_keys=True)
+    order_id = models.IntegerField(default= '')
+
 
 

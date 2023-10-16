@@ -7,7 +7,7 @@ urlpatterns = [
     path('faq/', views.FaQsTemplate.as_view(), name='faq_template'),
     path('contactus/', views.ContactTemplate.as_view(), name='contact_template'),
     path('checkoutpayment/', views.CheckOutPayment.as_view(), name='checkoutpayment'),
-    path('checkoutinfo/', views.CheckOutInfo.as_view(), name='checkoutinfo'),
+    path('checkoutinfo/', views.ShippingForm.as_view(), name='checkoutinfo'),
     path('checkoutcomplete/', views.CheckOutComplete.as_view(), name='checkoutcomplete'),
     path('checkoutcart/', views.CheckOutCart.as_view(), name='checkoutcart'),
     path('aboutus/', views.AboutUs.as_view(), name='aboutus'),
@@ -35,5 +35,6 @@ urlpatterns = [
     path('product/<str:product_name>/', views.ProductDetail.as_view(), name='product_detail'),
     path('arrivalproducts/', views.ArrivalProducts.as_view(), name= 'arrivalproducts'),
     path('applewatch/', views.AppleWatch.as_view(), name= 'applewatch'),
+
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
