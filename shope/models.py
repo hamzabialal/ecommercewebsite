@@ -66,27 +66,55 @@ class ProductDescription(models.Model):
     image = models.ImageField(upload_to='shop/images', default="")
 
 
+class CheckoutCart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
+    quantity = models.IntegerField(default=1, null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    total = models.IntegerField(default=0, null=True, blank=True)
+
+
+class StripePaymentIntentId(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    payment_intent_id = models.CharField(max_length=255, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
+
+
 class ShippingAddress(models.Model):
-    first_name = models.CharField(max_length=70)
-    last_name = models.CharField(max_length=70)
-    company_name = models.CharField(max_length=67, blank=True)
-    area_code = models.CharField(max_length=5)
-    primary_field = models.CharField(max_length=20)
-    street_address = models.CharField(max_length=300)
-    zip_code = models.CharField(max_length=13)
-    business_address = models.BooleanField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+    comp_name = models.CharField(max_length=255, null=True, blank=True)
+    area_code = models.CharField(max_length=10)
+    phone = models.CharField(max_length=15, default='')
+    address = models.CharField(max_length=255, default='')
+    zip_code = models.CharField(max_length=20)
+    busines_address = models.BooleanField(default=False, null=True, blank=True)
 
 
-class CardInformation(models.Model):
-    cardholder_name = models.CharField(max_length=200)
-    card_number = models.CharField(max_length=16)
-    payment_types = models.CharField(max_length=200)
-    expiration_data = models.CharField(max_length=200)
-    csc = models.CharField(max_length=3)
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product_qty = models.IntegerField(null=False, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-class OrderUpdate(models.Model):
-    update_id = models.AutoField(primary_keys=True)
-    order_id = models.IntegerField(default= '')
+
+class CreateCard(models.Model):
+    name = models.CharField(max_length=30)
+    card_number = models.IntegerField()
+    exp_year = models.CharField(max_length=30)
+    exp_month = models.CharField(max_length=30)
+    CSV = models.IntegerField()
+
+
+class WishList(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+
 
 
 

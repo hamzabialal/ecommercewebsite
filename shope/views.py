@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, FormView, ListView
-from .forms import ContactForm, SignUpForm, LoginForm, ProductForm,ShippingAddressForm,CardNumberForm
+from .forms import ContactForm, SignUpForm, LoginForm, ProductForm,ShippingAddressForm
 from django.contrib import messages
 from django.views import View
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
-from .models import Product, Category, ParentCategory
+from .models import Product, Category, ParentCategory, Cart, CheckoutCart
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.shortcuts import redirect
@@ -440,25 +440,19 @@ class ShippingForm(FormView):
         return super().form_valid(form)
 
 
-class CheckOutPayment(FormView):
+class CheckOutPayment(TemplateView):
     template_name = 'checkout_payment.html'
-    form_class = CardNumberForm
-    success_url = '/checkoutcomplete/'
-
-    def form_valid(self, form):
-        form.save()
-        return super().form_valid(form)
 
 
 class AddToCartView(View):
     def get(self, request, product_id):
         product = Product.objects.get(pk=product_id)
-
+        print(product)
         if 'cart' not in request.session:
             request.session['cart'] = {}
 
         cart = request.session['cart']
-        cart_item = cart.get(str(product_id), {'product': product, 'quantity': 0})
+        cart_item = cart.get(str(product_id), {'quantity': 0})
         cart_item['quantity'] += 1
         cart[str(product_id)] = cart_item
         request.session.modified = True
@@ -472,12 +466,12 @@ class AddToCartView(View):
             request.session['cart'] = {}
 
         cart = request.session['cart']
-        cart_item = cart.get(str(product_id), {'product': product, 'quantity': 0})
+        cart_item = cart.get(str(product_id), {'quantity': 0})
         cart_item['quantity'] += 1
         cart[str(product_id)] = cart_item
         request.session.modified = True
-
         return redirect('checkoutcart')
+
 
 class CheckOutCart(TemplateView):
     template_name = 'checkout_cart.html'
@@ -495,45 +489,83 @@ class CheckOutCart(TemplateView):
                 product = Product.objects.get(pk=product_id)
                 item_total[product_id] = cart_item['quantity'] * product.price
                 cart_total += item_total[product_id]
-                cart_item['product'] = product  # Attach the product to the cart_item
-                cart_item['total'] = item_total[product_id]
+                cart_item['product'] = product
+                cart_item['total_price'] = item_total[product_id]
             except Product.DoesNotExist:
-                # Handle the case where the product doesn't exist
-                cart_item['product'] = None  # Attach None for missing products
-                cart_item['total'] = 0
+                cart_item['product'] = None
+                cart_item['total_price'] = 0
 
-            context['cart'] = cart
-            context['cart_total'] = cart_total
-
-        context['parent_categories'] = ParentCategory.objects.all()
-        context['categories'] = Category.objects.all()
+        context['cartitems'] = cart.values()
+        context['cart_total'] = cart_total
 
         return context
 
+
 def increase_quantity(request, product_id):
-    # Retrieve the cart from the session
     cart = request.session.get('cart', {})
     cart_item = cart.get(str(product_id))
 
-    if cart_item and cart_item['quantity'] < 10:  # You mentioned a max limit of 10
+    if cart_item and cart_item['quantity'] < 10:  # Check if the quantity is less than 10
         cart_item['quantity'] += 1
         request.session['cart'] = cart
 
     return redirect('checkoutcart')
 
 def decrease_quantity(request, product_id):
-    # Retrieve the cart from the session
     cart = request.session.get('cart', {})
     cart_item = cart.get(str(product_id))
 
-    if cart_item and cart_item['quantity'] > 1:
+    if cart_item and cart_item['quantity'] > 1:  # Check if the quantity is greater than 1
         cart_item['quantity'] -= 1
         request.session['cart'] = cart
 
     return redirect('checkoutcart')
 
 
-
-
-
+# class CheckoutCart(ListView):
+#     model = CheckoutCart
+#     template_name = 'checkout_cart.html'
+#
+#
+#     def post(self, request, *args, **kwargs):
+#         product_id = request.POST.get('prod_id')
+#         operation = request.POST.get('operation')
+#         operation1 = request.POST.get('operation1')
+#         pro_check = CheckoutCart.objects.filter(product_id=product_id, user=request.user)
+#         if pro_check.exists():
+#             cart = CheckoutCart.objects.filter(product_id=product_id).first()
+#             if operation == 'decrease':
+#                 cart.quantity -= 1
+#                 cart.save()
+#                 if cart.quantity == 0:
+#                     cart.delete()
+#             elif operation1 == 'increase':
+#                 cart.quantity += 1
+#                 cart.save()
+#
+#             else:
+#                 cart.quantity += 1
+#                 cart.save()
+#
+#         else:
+#             cart_item = CheckoutCart.objects.create(product_id=product_id, user=request.user)
+#             cart_item.save()
+#         product_show = CheckoutCart.objects.all()
+#
+#         shipping = 10
+#         sub_total = 0
+#         total = 0
+#         for item in product_show:
+#             if item.product:
+#                 item.pro_total = item.quantity * item.product.price
+#                 sub_total += item.pro_total
+#                 total = (sub_total + shipping)
+#                 item.save()
+#         context = {
+#             'product_show': product_show,
+#             'sub_total': sub_total,
+#             'total': total,
+#
+#         }
+#         return render(request, self.template_name, context)
 

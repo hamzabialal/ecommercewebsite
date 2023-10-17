@@ -89,9 +89,11 @@
                                 <div class="product-price">
                                     <div class="price">$ {{product.discounted_price }}</div>
                                 </div>
-
-                                    <button type="submit" value="{{product.id}}">Add to Cart</button>
-
+                                 <form action="{% url 'add_to_cart' product.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button class="btn btn-inverse btn-lg" type="submit">ADD TO CART</button>
+                                </form>
+                                {% comment %} <button class="btn btn-inverse btn-lg" type="submit">ADD TO CART</button> {% endcomment %}
                                 </div>
                             <!-- END product-purchase-container -->
                         </div>
