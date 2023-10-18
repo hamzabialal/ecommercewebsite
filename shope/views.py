@@ -9,6 +9,8 @@ from .models import Product, Category, ParentCategory, Cart, CheckoutCart
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.shortcuts import redirect
+from django.http import JsonResponse
+
 
 from .models import Product
 
@@ -522,6 +524,18 @@ def decrease_quantity(request, product_id):
     return redirect('checkoutcart')
 
 
+def get_item_details(request):
+    item_id = request.GET.get('itemId')
+    try:
+        product = Product.objects.get(id=item_id)
+        item_data = {
+            'name': product.title,
+            'price': str(product.price),
+            'image': product.image.url,
+        }
+        return JsonResponse(item_data)
+    except Product.DoesNotExist:
+        return JsonResponse({'name': 'Item Not Found', 'price': '$Item Price', 'image': 'default-image.jpg'})
 # class CheckoutCart(ListView):
 #     model = CheckoutCart
 #     template_name = 'checkout_cart.html'
