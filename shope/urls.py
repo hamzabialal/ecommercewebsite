@@ -35,13 +35,12 @@ urlpatterns = [
     path('product/<str:product_name>/', views.ProductDetail.as_view(), name='product_detail'),
     path('arrivalproducts/', views.ArrivalProducts.as_view(), name= 'arrivalproducts'),
     path('applewatch/', views.AppleWatch.as_view(), name= 'applewatch'),
-    path('add_to_cart/<int:product_id>/', views.AddToCartView.as_view(), name='add_to_cart'),
     # ... other URL patterns ...
     path('mybackend/', views.get_item_details, name='get_item_details'),
+    path('add_to_cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
+    path('myprofile/', views.UserProfileView.as_view(), name='user_profile'),
 
-    path('increase_quantity/<int:product_id>/', views.increase_quantity, name='increase_quantity'),
-    path('decrease_quantity/<int:product_id>/', views.decrease_quantity, name='decrease_quantity'),
-
+    path('', views.HomeTemplate.as_view(), name='home_template'),
 
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -2,6 +2,11 @@ import uuid
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.text import slugify
+
+from django.db.models import Count
+
+
 import uuid
 # Create your models here.
 
@@ -32,6 +37,8 @@ class Category(models.Model):
 
 class Product(models.Model):
     title = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True, null=True, blank=True)
+
     in_stock = models.BooleanField(default=True)
     warranty = models.PositiveIntegerField()
     description = models.TextField()
@@ -43,6 +50,10 @@ class Product(models.Model):
     discount_percentage = models.DecimalField(max_digits=10, decimal_places=0,default=0)
     is_featured = models.BooleanField(default=True)
     arrival = models.BooleanField(default='')
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title)  # Use self.title, not self.product_name
+        super(Product, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.title
@@ -95,9 +106,10 @@ class ShippingAddress(models.Model):
 
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    product_qty = models.IntegerField(null=False, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    is_paid = models.BooleanField(default = False)
+
+    def __str__(self):
+        return self.user.username
 
 
 class CreateCard(models.Model):
@@ -112,6 +124,22 @@ class WishList(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class CartItems(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='cart_items')
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
+    quantity = models.IntegerField(default=1, null=False, blank=False)
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    profile_image = models.ImageField(upload_to='profile')
+
+
+
+    def get_cart_count(self):
+        return self.user.cart_set.filter(is_paid=False).aggregate(cart_count=Count('cart_items'))['cart_count']
 
 
 

@@ -5,10 +5,12 @@ from django.contrib import messages
 from django.views import View
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
-from .models import Product, Category, ParentCategory, Cart, CheckoutCart
+from .models import Product, Category, ParentCategory, Cart, CartItems
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+
 from django.http import JsonResponse
 
 
@@ -65,6 +67,22 @@ class HomeTemplate(ListView):
         context['parent_categories'] = ParentCategory.objects.all()
 
         return context
+
+    def get(self, request):
+        user = request.user
+        if user.is_authenticated:
+            cart = Cart.objects.filter(user=user, is_paid=False).first()
+            if cart:
+                cart_items = CartItems.objects.filter(cart=cart)
+            else:
+                cart_items = []
+        else:
+            cart_items = []
+
+        context = {
+            'cart_items': cart_items
+        }
+        return render(request, self.template_name, context)
 
 
 class FaQsTemplate(ListView):
@@ -446,33 +464,33 @@ class CheckOutPayment(TemplateView):
     template_name = 'checkout_payment.html'
 
 
-class AddToCartView(View):
-    def get(self, request, product_id):
-        product = Product.objects.get(pk=product_id)
-        print(product)
-        if 'cart' not in request.session:
-            request.session['cart'] = {}
-
-        cart = request.session['cart']
-        cart_item = cart.get(str(product_id), {'quantity': 0})
-        cart_item['quantity'] += 1
-        cart[str(product_id)] = cart_item
-        request.session.modified = True
-
-        return redirect('checkoutcart')
-
-    def post(self, request, product_id):
-        product = Product.objects.get(pk=product_id)
-
-        if 'cart' not in request.session:
-            request.session['cart'] = {}
-
-        cart = request.session['cart']
-        cart_item = cart.get(str(product_id), {'quantity': 0})
-        cart_item['quantity'] += 1
-        cart[str(product_id)] = cart_item
-        request.session.modified = True
-        return redirect('checkoutcart')
+# class AddToCartView(View):
+#     def get(self, request, product_id):
+#         product = Product.objects.get(pk=product_id)
+#         print(product)
+#         if 'cart' not in request.session:
+#             request.session['cart'] = {}
+#
+#         cart = request.session['cart']
+#         cart_item = cart.get(str(product_id), {'quantity': 0})
+#         cart_item['quantity'] += 1
+#         cart[str(product_id)] = cart_item
+#         request.session.modified = True
+#
+#         return redirect('checkoutcart')
+#
+#     def post(self, request, product_id):
+#         product = Product.objects.get(pk=product_id)
+#
+#         if 'cart' not in request.session:
+#             request.session['cart'] = {}
+#
+#         cart = request.session['cart']
+#         cart_item = cart.get(str(product_id), {'quantity': 0})
+#         cart_item['quantity'] += 1
+#         cart[str(product_id)] = cart_item
+#         request.session.modified = True
+#         return redirect('checkoutcart')
 
 
 class CheckOutCart(TemplateView):
@@ -583,3 +601,46 @@ def get_item_details(request):
 #         }
 #         return render(request, self.template_name, context)
 
+
+
+from django.shortcuts import reverse
+
+def add_to_cart(request, product_id):
+    user = request.user
+    product = Product.objects.get(id=product_id)
+
+    # Check if the user has an active cart
+    cart, created = Cart.objects.get_or_create(user=user, is_paid=False)
+
+    # Check if the product is already in the cart
+    cart_item, created = CartItems.objects.get_or_create(cart=cart, product=product)
+
+    if not created:
+        cart_item.quantity += 1
+        cart_item.save()
+
+    # Redirect to a different URL after adding the item to the cart
+    return HttpResponseRedirect(reverse('applewatch'))
+
+def get_cart_count(self):
+    count = CartItems.objects.filter(cart__is_paid=False, cart__user=self.user).count()
+    print(f"Cart Count: {count}")
+    return count
+
+
+
+
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class UserProfileView(LoginRequiredMixin, TemplateView):
+    template_name = 'my_account.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        profile = user.profile
+        cart_count = profile.get_cart_count()
+        context['profile'] = profile
+        context['cart_count'] = cart_count
+        return context

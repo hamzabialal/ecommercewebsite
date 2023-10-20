@@ -73,7 +73,7 @@
                         <div class="checkout-body">
                             <div class="table-responsive">
                                 {% if cartitems %}
-    <table class="table table-cart">
+    <table class="table table-cart" id = "items">
         <thead>
             <tr>
                 <th>Product Name</th>
@@ -94,9 +94,9 @@
                     <td class="cart-price text-center">${{ cart_item.product.price }}</td>
                     <td class="cart-qty text-center">
                         <div class="cart-qty-input">
-                            <a href="{% url 'increase_quantity' product_id=cart_item.product.id %}" class="qty-control left {% if cart_item.quantity == 1 %}disabled{% endif %}" data-click="decrease-qty" data-target="#qty"><i class="fa fa-minus"></i></a>
+                            <a href="/" class="qty-control" data-click="decrease-qty" data-target="#qty"><i class="fa fa-minus"></i></a>
                             <input type="text" name="qty" value="{{ cart_item.quantity }}" class="form-control" id="qty" />
-                            <a href="{% url 'increase_quantity' product_id=cart_item.product.id %}" class="qty-control right {% if cart_item.quantity >= 10 %}disabled{% endif %}" data-click="increase-qty" data-target="#qty"><i class="fa fa-plus"></i></a>
+                            <a href="/" class="qty-control right" data-click="increase-qty" data-target="#qty"><i class="fa fa-plus"></i></a>
                         </div>
                         <div class="qty-desc">1 to max order</div>
                     </td>
@@ -198,29 +198,77 @@
             <!-- END container -->
         </div>
         <!-- END #policy -->
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const decreaseButton = document.querySelector('[data-click="decrease-qty"]');
-        const increaseButton = document.querySelector('[data-click="increase-qty"]');
-        const quantityInput = document.getElementById('qty');
 
-        decreaseButton.addEventListener("click", function(e) {
-            e.preventDefault();
-            let currentQuantity = parseInt(quantityInput.value);
-            if (currentQuantity > 1) {
-                currentQuantity--;
-                quantityInput.value = currentQuantity;
-            }
-        });
-
-        increaseButton.addEventListener("click", function(e) {
-            e.preventDefault();
-            let currentQuantity = parseInt(quantityInput.value);
-            if (currentQuantity < 10) { // Change the limit to your desired maximum quantity
-                currentQuantity++;
-                quantityInput.value = currentQuantity;
-            }
-        });
-    });
-</script>
 {% endblock content %}
+
+
+<!--{% block js %}-->
+<!--<script>-->
+<!--    var cart = {}; // Declare cart at the global level-->
+
+<!--    if (localStorage.getItem('cart') !== null) {-->
+<!--        cart = JSON.parse(localStorage.getItem('cart'));-->
+<!--    }-->
+
+<!--    // Access the tbody where you want to display cart items-->
+<!--    var cartTbody = document.getElementById('cart-items');-->
+
+<!--    for (let itemId in cart) {-->
+<!--        let itemData = cart[itemId]; // Access the cart item data-->
+
+<!--        // Create a new row for the cart item-->
+<!--        var cartItemRow = document.createElement('tr');-->
+
+<!--        // Create the cell for product name and image-->
+<!--        var cartProductCell = document.createElement('td');-->
+<!--        cartProductCell.className = 'cart-product';-->
+
+<!--        // Create the product image div-->
+<!--        var productImageDiv = document.createElement('div');-->
+<!--        productImageDiv.className = 'product-img';-->
+<!--        var productImage = document.createElement('img');-->
+<!--        productImage.src = itemData.image;-->
+<!--        productImage.alt = itemData.name;-->
+<!--        productImageDiv.appendChild(productImage);-->
+
+<!--        // Create the product info div-->
+<!--        var productInfoDiv = document.createElement('div');-->
+<!--        productInfoDiv.className = 'product-info';-->
+<!--        var productName = document.createElement('div');-->
+<!--        productName.className = 'title';-->
+<!--        productName.innerHTML = itemData.name;-->
+<!--        productInfoDiv.appendChild(productName);-->
+
+<!--        // Append the image and product info divs to the product cell-->
+<!--        cartProductCell.appendChild(productImageDiv);-->
+<!--        cartProductCell.appendChild(productInfoDiv);-->
+
+<!--        // Append the product cell to the row-->
+<!--        cartItemRow.appendChild(cartProductCell);-->
+
+<!--        // Create the cell for product price-->
+<!--        var cartPriceCell = document.createElement('td');-->
+<!--        cartPriceCell.className = 'cart-price text-center';-->
+<!--        cartPriceCell.innerHTML = '$' + itemData.price;-->
+<!--        cartItemRow.appendChild(cartPriceCell);-->
+
+<!--        // Create the cell for product quantity-->
+<!--        var cartQtyCell = document.createElement('td');-->
+<!--        cartQtyCell.className = 'cart-qty text-center';-->
+<!--        cartQtyCell.innerHTML = itemData.qty;-->
+<!--        cartItemRow.appendChild(cartQtyCell);-->
+
+<!--        // Create the cell for product total-->
+<!--        var cartTotalCell = document.createElement('td');-->
+<!--        cartTotalCell.className = 'cart-total text-center';-->
+<!--        cartTotalCell.innerHTML = '$' + (itemData.price * itemData.qty);-->
+<!--        cartItemRow.appendChild(cartTotalCell);-->
+
+<!--        // Append the row to the cart tbody-->
+<!--        cartTbody.appendChild(cartItemRow);-->
+<!--    }-->
+<!--</script>-->
+
+
+
+<!--{% endblock js %}-->

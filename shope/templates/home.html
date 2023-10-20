@@ -223,9 +223,13 @@
                     <div class="header-nav">
                         <ul class="nav pull-right">
                             <li class="dropdown dropdown-hover">
-                                <a href="#" class="header-cart" data-toggle="dropdown">
+                                <a href="{% url 'checkoutcart' %}" class="header-cart" data-toggle="dropdown">
                                     <i class="fa fa-shopping-bag"></i>
-                                    <span class="total" id="cart">0</span>
+                                    {% if request.user.is_authenticated %}
+                                        <span class="total" id="cart-count">{{ request.user.profile.get_cart_count }}</span>
+                                    {% else %}
+                                        <span class="total" id="cart-count">0</span>
+                                    {% endif %}
                                     <span class="arrow top"></span>
                                 </a>
 
@@ -234,8 +238,37 @@
                                         <h4 class="cart-title">Shopping Bag <span id="shopping">(0)</span> </h4>
                                     </div>
                                     <div class="cart-body" id="popcart">
-                                        <ul class="cart-item" >
-
+                                        <ul class="cart-item">
+                                            <li>
+                                                <div class="cart-item-image"><img src="assets/img/ipad.jpg" alt="" /></div>
+                                                <div class="cart-item-info">
+                                                    <h4>iPad Pro Wi-Fi 128GB - Silver</h4>
+                                                    <p class="price">$699.00</p>
+                                                </div>
+                                                <div class="cart-item-close">
+                                                    <a href="#" data-toggle="tooltip" data-title="Remove">&times;</a>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="cart-item-image"><img src="assets/img/imac.jpg" alt="" /></div>
+                                                <div class="cart-item-info">
+                                                    <h4>21.5-inch iMac</h4>
+                                                    <p class="price">$1299.00</p>
+                                                </div>
+                                                <div class="cart-item-close">
+                                                    <a href="#" data-toggle="tooltip" data-title="Remove">&times;</a>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="cart-item-image"><img src="assets/img/iphone.png" alt="" /></div>
+                                                <div class="cart-item-info">
+                                                    <h4>iPhone 6s 16GB - Silver</h4>
+                                                    <p class="price">$649.00</p>
+                                                </div>
+                                                <div class="cart-item-close">
+                                                    <a href="#" data-toggle="tooltip" data-title="Remove">&times;</a>
+                                                </div>
+                                            </li>
                                         </ul>
                                     </div>
                                     <div class="cart-footer">
@@ -420,7 +453,7 @@
 	<![endif]-->
 	<script src="{% static 'assets/plugins/jquery-cookie/jquery.cookie.js' %}"></script>
 	<script src="{% static 'assets/js/apps.min.js' %}"></script>
-	<script src="{% static 'assets/js/My.js' %}"></script>
+    {% block js %} {% endblock js %}
 
 	<!-- ================== END BASE JS ================== -->
 

@@ -1,6 +1,4 @@
-console.log('working');
-
-var cart = {};
+var cart = {}; // Declare cart at the global level
 
 if (localStorage.getItem('cart') !== null) {
   cart = JSON.parse(localStorage.getItem('cart'));
@@ -13,19 +11,28 @@ $('.cart').click(function () {
   console.log(idstr);
 
   if (cart[idstr] != undefined) {
-    cart[idstr] = cart[idstr] + 1;
+    cart[idstr].qty += 1; // Increase the quantity if the product already exists
   } else {
-    cart[idstr] = 1;
+    // If the product doesn't exist in the cart, fetch the product details
+    getItemDetails(idstr, function (itemData) {
+      var qty = 1;
+      var name = itemData.name;
+      var image = itemData.image;
+      var price = itemData.price;
+      cart[idstr] = { qty: qty, name: name, image: image, price: price }; // Add the product to the cart
+      localStorage.setItem('cart', JSON.stringify(cart)); // Save the updated cart
+      console.log('Product Name for ID ' + idstr + ': ' + name); // Log the actual product name
+      updateCartDisplay(); // Update the cart display after fetching details
+    });
   }
-
-  console.log(cart);
-  localStorage.setItem('cart', JSON.stringify(cart));
-  updateCartDisplay();
 });
-// Define a function to make an AJAX request to the server to fetch item details
+
+
+
+
 function getItemDetails(itemId, callback) {
   $.ajax({
-    url: 'http://127.0.0.1:1200/mybackend/', // Replace with your backend endpoint
+    url: 'http://127.0.0.1:1200/mybackend/',
     method: 'GET',
     data: { itemId: itemId },
     success: function (data) {
@@ -33,7 +40,7 @@ function getItemDetails(itemId, callback) {
     },
     error: function (error) {
       console.error('Error fetching item details', error);
-      callback({ name: 'Item Name', price: '$Item Price' }); // Provide default values
+      callback({ name: 'Item Name', price: '$Item price' });
     },
   });
 }
@@ -41,28 +48,27 @@ function updateCartDisplay() {
   document.getElementById('cart').innerHTML = Object.keys(cart).length;
   document.getElementById('shopping').innerHTML = Object.keys(cart).length;
 
-  // Clear the existing cart items
   $('#popcart ul.cart-item').empty();
 
-  // Iterate through the cart items and add them to the cart dropdown
   for (var itemId in cart) {
     if (cart.hasOwnProperty(itemId)) {
-      // Use a closure to capture itemId for this iteration
       (function (itemId) {
         getItemDetails(itemId, function (itemData) {
-          // Create the structure for each cart item using the retrieved item data
+//          console.log(itemData.discount_percentage);
+
           var cartItem = document.createElement('li');
+
           cartItem.innerHTML = `
             <div class="cart-item-image"><img src="${itemData.image}" alt="" /></div>
             <div class="cart-item-info">
               <h4>${itemData.name}</h4>
-              <p class="price">${itemData.discount_percentage}</p>
+
+              <p class="price">${itemData.price}</p>
             </div>
             <div class="cart-item-close">
               <a href="#" data-toggle="tooltip" data-title="Remove" class="remove-item" data-itemid="${itemId}">&times;</a>
             </div>`;
 
-          // Add the cart item to the cart dropdown
           $('#popcart ul.cart-item').append(cartItem);
         });
       })(itemId);

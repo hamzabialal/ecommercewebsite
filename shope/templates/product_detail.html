@@ -89,10 +89,10 @@
                                 <div class="product-price">
                                     <div class="price">$ {{product.discounted_price }}</div>
                                 </div>
+                                    <a href="{% url 'add_to_cart' product.id %}" class="btn btn-inverse btn-lg cart">ADD TO CART</a>
 
-                                    <button id= '{{product.id}}' class="btn btn-inverse btn-lg cart" type="submit">ADD TO CART</button>
 
-                                {% comment %} <button class="btn btn-inverse btn-lg cart" type="submit">ADD TO CART</button> {% endcomment %}
+
                                 </div>
                             <!-- END product-purchase-container -->
                         </div>

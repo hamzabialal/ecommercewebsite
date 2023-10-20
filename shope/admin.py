@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ContactUs,CheckoutCart, Product, ProductImage, Category, ProductDescription, ParentCategory,CreateCard,StripePaymentIntentId
+from .models import ContactUs,CheckoutCart, Product, ProductImage, Category, ProductDescription, ParentCategory,Cart, CartItems, Profile
 
 
 @admin.register(ContactUs)
@@ -30,7 +30,18 @@ class ProductDescriptionAdmin(admin.ModelAdmin):
 @admin.register(ParentCategory)
 class ParentCategoryAdmin(admin.ModelAdmin):
     list_display = ['id', 'name']
-admin.site.register(StripePaymentIntentId)
-admin.site.register(CreateCard)
-admin.site.register(CheckoutCart)
 
+
+@admin.register(CartItems)
+class CartItemsAdmin(admin.ModelAdmin):
+    list_display = ['id', 'cart', 'product', 'quantity']
+
+
+@admin.register(Cart)
+class CartAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'is_paid']
+
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'profile_image']
