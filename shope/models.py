@@ -92,8 +92,6 @@ class StripePaymentIntentId(models.Model):
 
 
 class ShippingAddress(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     comp_name = models.CharField(max_length=255, null=True, blank=True)

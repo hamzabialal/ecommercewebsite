@@ -7,7 +7,7 @@
             <div class="container">
                 <!-- BEGIN checkout -->
                 <div class="checkout">
-                    <form action="{% url 'checkoutpayment' %}" method="POST" name="form_shipping" class="form-horizontal">
+                    <form action="{% url 'checkoutinfo' %}" method="POST" name="form_shipping" class="form-horizontal">
                         {% csrf_token %}
                         <!-- BEGIN checkout-header -->
                         <div class="checkout-header">
@@ -70,95 +70,106 @@
                         </div>
                         <!-- END checkout-header -->
                         <!-- BEGIN checkout-body -->
-                        <div class="checkout-body">
-                            <div class="form-group">
-                                <label class="control-label col-md-4">
-                                    First Name <span class="text-danger">*</span>
-                                </label>
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" name="first_name" value="" placeholder="" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-4">
-                                    Last Name <span class="text-danger">*</span>
-                                </label>
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" name="last_name" value="" placeholder="" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-4">
-                                    Company Name (optional)<span class="text-danger">&nbsp;</span>
-                                </label>
-                                <div class="col-md-8">
-                                    <input type="text" class="form-control" name="company_name" value="" placeholder="" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-4">
-                                    Area Code <span class="text-danger">*</span>
-                                </label>
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" name="area_code" value="" placeholder="" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-4">
-                                    Primary Phone <span class="text-danger">*</span>
-                                </label>
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" name="primary_field" value="" placeholder="" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-4">
-                                    Street Address <span class="text-danger">*</span>
-                                </label>
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control m-b-10" name="street_address" value="" placeholder="" />
-                                    <input type="text" class="form-control" name="address_2" value="" placeholder="" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-4">
-                                    ZIP Code<span class="text-danger">*</span>
-                                </label>
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" name="zip_code" value="" placeholder="" />
-                                    <p class="help-block m-b-0">Enter ZIP for City and State ZIP Code</p>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-4">
-                                    &nbsp;
-                                </label>
-                                <div class="col-md-4">
-                                    <label class="f-w-500">
-                                        <input type="checkbox" name="business_address" value="1" />
-                                        This is a business address
-                                        <a href="#" class="m-l-5 text-muted" data-toggle="tooltip" data-trigger="hover" data-placement="top" data-title="This helps us choose the best shipping method for you. Business shipments are normally delivered on weekdays by 5:00 p.m. local time. Residential shipments are normally delivered Monday - Saturday by 8:00 p.m. local time.">
-                                            <i class="fa fa-question-circle"></i>
-                                        </a>
-                                    </label>
-                                </div>
+                 <div class="checkout-body">
+                    <form class="form-horizontal" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="control-label col-md-4">
+                                First Name <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-md-4">
+                                {{ form.first_name }}
                             </div>
                         </div>
-                                                    <hr />
-                            <div class="m-b-5"><b>Shipping Policy</b></div>
-                            <ul class="checkout-info-list">
-                                <li>Signature may be required for delivery</li>
-                                <li>We do not ship to P.O. boxes</li>
-                                <li>Delivery estimates below include item preparation and shipping time</li>
-                                <li>We do not ship directly to APO/FPO addresses.</li>
+                        <div class="form-group">
+                            <label class="control-label col-md-4">
+                                Last Name <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-md-4">
+                                {{ form.last_name }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4">
+                                Company Name (optional)<span class="text-danger">&nbsp;</span>
+                            </label>
+                            <div class="col-md-8">
+                                {{ form.comp_name }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4">
+                                Area Code <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-md-4">
+                                {{ form.area_code }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4">
+                                Primary Phone <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-md-4">
+                                {{ form.phone }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4">
+                                Street Address <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-md-4">
+                                {{ form.address }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4">
+                                ZIP Code<span class="text-danger">*</span>
+                            </label>
+                            <div class="col-md-4">
+                                {{ form.zip_code }}
+                                <p class="help-block m-b-0">Enter ZIP for City and State ZIP Code</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-4">
+                                &nbsp;
+                            </label>
+                            <div class="col-md-4">
+                                {{ form.busines_address }}
+                                <label class="f-w-500">
+                                    This is a business address
+                                    <a href="#" class="m-l-5 text-muted" data-toggle="tooltip" data-trigger="hover" data-placement="top" data-title="This helps us choose the best shipping method for you. Business shipments are normally delivered on weekdays by 5:00 p.m. local time. Residential shipments are normally delivered Monday - Saturday by 8:00 p.m. local time.">
+                                        <i class="fa fa-question-circle"></i>
+                                    </a>
+                                </label>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="m-b-5"><b>Shipping Policy</b></div>
+                        <ul class="checkout-info-list">
+                            <li>Signature may be required for delivery</li>
+                            <li>We do not ship to P.O. boxes</li>
+                            <li>Delivery estimates below include item preparation and shipping time</li>
+                            <li>We do not ship directly to APO/FPO addresses.</li>
+                        </ul>
+                    </div>
+                    <!-- END checkout-body -->
+                    <!-- BEGIN checkout-footer -->
+                    <div class="checkout-footer">
+                        <a href="checkout_cart.html" class="btn btn-white btn-lg pull-left">Back</a>
+                        <button type="submit" class="btn btn-inverse btn-lg p-l-30 p-r-30 m-l-10">Continue</button>
+                    </div>
+                </form>
+
+                                        {% if messages %}
+                        <div class="messages">
+                            <ul classcd ="errorlist">
+                                {% for message in messages %}
+                                <li>{{ message }}</li>
+                                {% endfor %}
                             </ul>
                         </div>
-                        <!-- END checkout-body -->
-                        <!-- BEGIN checkout-footer -->
-                        <div class="checkout-footer">
-                            <a href="checkout_cart.html" class="btn btn-white btn-lg pull-left">Back</a>
-                            <button type="submit" class="btn btn-inverse btn-lg p-l-30 p-r-30 m-l-10">Continue</button>
-                        </div>
+                        {% endif %}
                         <!-- END checkout-footer -->
                     </form>
                 </div>

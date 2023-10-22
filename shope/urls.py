@@ -39,8 +39,10 @@ urlpatterns = [
     path('mybackend/', views.get_item_details, name='get_item_details'),
     path('add_to_cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
     path('myprofile/', views.UserProfileView.as_view(), name='user_profile'),
+    path('remove_from_cart/<int:cart_item_id>/', views.remove_cart, name='remove_from_cart'),
 
-    path('', views.HomeTemplate.as_view(), name='home_template'),
+
+                  path('', views.HomeTemplate.as_view(), name='home_template'),
 
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,11 +1,10 @@
 from django.contrib import admin
-from .models import ContactUs,CheckoutCart, Product, ProductImage, Category, ProductDescription, ParentCategory,Cart, CartItems, Profile
+from .models import ContactUs,CheckoutCart, ShippingAddress, Product, ProductImage, Category, ProductDescription, ParentCategory,Cart, CartItems, Profile
 
 
 @admin.register(ContactUs)
 class ContactAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'email', 'subject', 'message']
-
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -45,3 +44,8 @@ class CartAdmin(admin.ModelAdmin):
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'profile_image']
+
+
+@admin.register(ShippingAddress)
+class ShippingAddressAdmin(admin.ModelAdmin):
+    list_display = ['id', 'first_name', 'last_name', 'comp_name', 'area_code', 'phone', 'address', 'zip_code', 'busines_address']

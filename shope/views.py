@@ -3,14 +3,16 @@ from django.views.generic import TemplateView, FormView, ListView
 from .forms import ContactForm, SignUpForm, LoginForm, ProductForm,ShippingAddressForm
 from django.contrib import messages
 from django.views import View
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from .models import Product, Category, ParentCategory, Cart, CartItems
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.shortcuts import redirect
-from django.contrib.auth.decorators import login_required
-
+from django.http import JsonResponse
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import reverse
+from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
 
@@ -31,7 +33,6 @@ class Header(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Print a message to check if this method is executed.
         print("get_context_data is called")
 
         context['parent_categories'] = ParentCategory.objects.all()
@@ -52,24 +53,17 @@ class HomeTemplate(ListView):
 
         context['categories'] = Category.objects.all()
 
-        parent_category = ParentCategory.objects.filter(name='Phones').first()
+        parent_category_phones = ParentCategory.objects.filter(name='Phones').first()
+        parent_category_tablets = ParentCategory.objects.filter(name='Tablets').first()
 
-        if parent_category:
-            context['phones'] = Product.objects.filter(parent__parent_category=parent_category)
-        else:
-            context['phones'] = []
-        tablets_category = ParentCategory.objects.filter(name='Tablets').first()
-        if tablets_category:
-            context['tablets'] = Product.objects.filter(parent__parent_category=tablets_category)
-        else:
-            context['tablets'] = []
+        context['phones'] = Product.objects.filter(
+            parent__parent_category=parent_category_phones) if parent_category_phones else []
+        context['tablets'] = Product.objects.filter(
+            parent__parent_category=parent_category_tablets) if parent_category_tablets else []
 
         context['parent_categories'] = ParentCategory.objects.all()
 
-        return context
-
-    def get(self, request):
-        user = request.user
+        user = self.request.user
         if user.is_authenticated:
             cart = Cart.objects.filter(user=user, is_paid=False).first()
             if cart:
@@ -79,11 +73,9 @@ class HomeTemplate(ListView):
         else:
             cart_items = []
 
-        context = {
-            'cart_items': cart_items
-        }
-        return render(request, self.template_name, context)
+        context['cart_items'] = cart_items
 
+        return context
 
 class FaQsTemplate(ListView):
     template_name = 'faq.html'
@@ -102,12 +94,12 @@ class FaQsTemplate(ListView):
 class ContactTemplate(FormView):
     template_name = 'contact_us.html'
     form_class = ContactForm
-    success_url = '/products/'
+    success_url = '/'
 
     def form_valid(self, form):
+        # Handle form submission
         form.save()
         return super().form_valid(form)
-
 
 
 
@@ -117,8 +109,6 @@ class ContactTemplate(FormView):
         context['categories'] = Category.objects.all()
         return context
 
-    def post(self, request, *args, **kwargs):
-        return super(CheckOutPayment, self).get(request, *args, **kwargs)
 
 class CheckOutInfo(TemplateView):
     template_name = 'checkout_info.html'
@@ -138,8 +128,6 @@ class CheckOutComplete(TemplateView):
         context['parent_categories'] = ParentCategory.objects.all()
         context['categories'] = Category.objects.all()
         return context
-
-
 
 
 class AboutUs(TemplateView):
@@ -189,10 +177,6 @@ class ProductDetail(TemplateView):
         return context
 
 
-
-
-
-
 class SearchView(ListView):
     template_name = 'search_results.html'
     model = Product
@@ -212,7 +196,6 @@ class SearchView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Add categories to the context
         context['categories'] = Category.objects.all()
 
         return context
@@ -456,41 +439,12 @@ class ShippingForm(FormView):
     success_url = '/checkoutpayment/'
 
     def form_valid(self, form):
+        # Handle form submission
         form.save()
         return super().form_valid(form)
 
-
 class CheckOutPayment(TemplateView):
     template_name = 'checkout_payment.html'
-
-
-# class AddToCartView(View):
-#     def get(self, request, product_id):
-#         product = Product.objects.get(pk=product_id)
-#         print(product)
-#         if 'cart' not in request.session:
-#             request.session['cart'] = {}
-#
-#         cart = request.session['cart']
-#         cart_item = cart.get(str(product_id), {'quantity': 0})
-#         cart_item['quantity'] += 1
-#         cart[str(product_id)] = cart_item
-#         request.session.modified = True
-#
-#         return redirect('checkoutcart')
-#
-#     def post(self, request, product_id):
-#         product = Product.objects.get(pk=product_id)
-#
-#         if 'cart' not in request.session:
-#             request.session['cart'] = {}
-#
-#         cart = request.session['cart']
-#         cart_item = cart.get(str(product_id), {'quantity': 0})
-#         cart_item['quantity'] += 1
-#         cart[str(product_id)] = cart_item
-#         request.session.modified = True
-#         return redirect('checkoutcart')
 
 
 class CheckOutCart(TemplateView):
@@ -499,47 +453,25 @@ class CheckOutCart(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        cart = self.request.session.get('cart', {})
+        user = self.request.user
+        if user.is_authenticated:
+            cart = Cart.objects.filter(user=user, is_paid=False).first()
+            if cart:
+                cart_items = CartItems.objects.filter(cart=cart)
+                cart_total = sum(item.product.discounted_price * item.quantity for item in cart_items)
+                for cart_item in cart_items:
+                    cart_item.total_price = cart_item.product.discounted_price * cart_item.quantity
+            else:
+                cart_items = []
+                cart_total = 0
+        else:
+            cart_items = []
+            cart_total = 0
 
-        item_total = {}
-        cart_total = 0
-
-        for product_id, cart_item in cart.items():
-            try:
-                product = Product.objects.get(pk=product_id)
-                item_total[product_id] = cart_item['quantity'] * product.price
-                cart_total += item_total[product_id]
-                cart_item['product'] = product
-                cart_item['total_price'] = item_total[product_id]
-            except Product.DoesNotExist:
-                cart_item['product'] = None
-                cart_item['total_price'] = 0
-
-        context['cartitems'] = cart.values()
+        context['cart_items'] = cart_items
         context['cart_total'] = cart_total
 
         return context
-
-
-def increase_quantity(request, product_id):
-    cart = request.session.get('cart', {})
-    cart_item = cart.get(str(product_id))
-
-    if cart_item and cart_item['quantity'] < 10:  # Check if the quantity is less than 10
-        cart_item['quantity'] += 1
-        request.session['cart'] = cart
-
-    return redirect('checkoutcart')
-
-def decrease_quantity(request, product_id):
-    cart = request.session.get('cart', {})
-    cart_item = cart.get(str(product_id))
-
-    if cart_item and cart_item['quantity'] > 1:  # Check if the quantity is greater than 1
-        cart_item['quantity'] -= 1
-        request.session['cart'] = cart
-
-    return redirect('checkoutcart')
 
 
 def get_item_details(request):
@@ -554,72 +486,22 @@ def get_item_details(request):
         return JsonResponse(item_data)
     except Product.DoesNotExist:
         return JsonResponse({'name': 'Item Not Found', 'price': '$Item Price', 'image': 'default-image.jpg'})
-# class CheckoutCart(ListView):
-#     model = CheckoutCart
-#     template_name = 'checkout_cart.html'
-#
-#
-#     def post(self, request, *args, **kwargs):
-#         product_id = request.POST.get('prod_id')
-#         operation = request.POST.get('operation')
-#         operation1 = request.POST.get('operation1')
-#         pro_check = CheckoutCart.objects.filter(product_id=product_id, user=request.user)
-#         if pro_check.exists():
-#             cart = CheckoutCart.objects.filter(product_id=product_id).first()
-#             if operation == 'decrease':
-#                 cart.quantity -= 1
-#                 cart.save()
-#                 if cart.quantity == 0:
-#                     cart.delete()
-#             elif operation1 == 'increase':
-#                 cart.quantity += 1
-#                 cart.save()
-#
-#             else:
-#                 cart.quantity += 1
-#                 cart.save()
-#
-#         else:
-#             cart_item = CheckoutCart.objects.create(product_id=product_id, user=request.user)
-#             cart_item.save()
-#         product_show = CheckoutCart.objects.all()
-#
-#         shipping = 10
-#         sub_total = 0
-#         total = 0
-#         for item in product_show:
-#             if item.product:
-#                 item.pro_total = item.quantity * item.product.price
-#                 sub_total += item.pro_total
-#                 total = (sub_total + shipping)
-#                 item.save()
-#         context = {
-#             'product_show': product_show,
-#             'sub_total': sub_total,
-#             'total': total,
-#
-#         }
-#         return render(request, self.template_name, context)
 
 
 
-from django.shortcuts import reverse
 
 def add_to_cart(request, product_id):
     user = request.user
     product = Product.objects.get(id=product_id)
 
-    # Check if the user has an active cart
     cart, created = Cart.objects.get_or_create(user=user, is_paid=False)
 
-    # Check if the product is already in the cart
     cart_item, created = CartItems.objects.get_or_create(cart=cart, product=product)
 
     if not created:
         cart_item.quantity += 1
         cart_item.save()
 
-    # Redirect to a different URL after adding the item to the cart
     return HttpResponseRedirect(reverse('applewatch'))
 
 def get_cart_count(self):
@@ -627,11 +509,6 @@ def get_cart_count(self):
     print(f"Cart Count: {count}")
     return count
 
-
-
-
-
-from django.contrib.auth.mixins import LoginRequiredMixin
 
 class UserProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'my_account.html'
@@ -644,3 +521,24 @@ class UserProfileView(LoginRequiredMixin, TemplateView):
         context['profile'] = profile
         context['cart_count'] = cart_count
         return context
+
+@csrf_exempt
+def remove_from_cart(request):
+    if request.method == "POST" and request.is_ajax():
+        item_id = request.POST.get("item_id")
+        try:
+            cart_item = CartItems.objects.get(id=item_id)
+            cart_item.delete()
+            return JsonResponse({"success": True})
+        except CartItems.DoesNotExist:
+            return JsonResponse({"success": False})
+    return JsonResponse({"success": False})
+
+def remove_cart(request, cart_item_id):
+    print("Cart item ID:", cart_item_id)
+    try:
+        cart_item = CartItems.objects.get(id=cart_item_id)
+        cart_item.delete()
+        return redirect('checkoutcart')
+    except CartItems.DoesNotExist:
+        return HttpResponse("Cart item does not exist")
