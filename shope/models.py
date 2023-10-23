@@ -42,6 +42,7 @@ class Product(models.Model):
     in_stock = models.BooleanField(default=True)
     warranty = models.PositiveIntegerField()
     description = models.TextField()
+
     price = models.DecimalField(max_digits=10, decimal_places=0)
     image = models.ImageField(upload_to='shop/images', default="")
     is_active = models.BooleanField(default=True)

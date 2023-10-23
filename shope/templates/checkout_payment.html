@@ -7,8 +7,9 @@
             <div class="container">
                 <!-- BEGIN checkout -->
                 <div class="checkout">
-                    <form action="checkout_complete.html" method="POST" name="form_payment" class="form-horizontal">
+                    <form action="{% url 'paymentconfirm' %}" method="POST" name="form_payment" class="form-horizontal">
                         <!-- BEGIN checkout-header -->
+                        {% csrf_token %}
                         <div class="checkout-header">
                             <!-- BEGIN row -->
                             <div class="row">
@@ -71,52 +72,47 @@
                         <!-- BEGIN checkout-body -->
                         <div class="checkout-body">
                             <h4 class="checkout-title">Choose a payment method</h4>
-                            <form method="post">
-                                {% csrf_token %}
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">Cardholder Name <span class="text-danger">*</span></label>
-                                    <div class="col-md-4">
-                                        {{ form.cardholder_name }}
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">Card Number <span class="text-danger">*</span></label>
-                                    <div class="col-md-4">
-                                        {{ form.card_number }}
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">Payment Types <span class="text-danger">*</span></label>
-                                    <div class="col-sm-8">
-                                        {{ form.payment_types }}
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">Expiration Date <span class="text-danger">*</span></label>
-                                    <div class="col-md-8">
-                                        <div class="width-100">
-                                            <div class="row row-space-0">
-                                                <div class="col-xs-5">
-                                                    {{ form.expiration_month }}
-                                                </div>
-                                                <div class="col-xs-2 text-center">
-                                                    <div class="text-muted p-t-5 m-t-2">/</div>
-                                                </div>
-                                                <div class="col-xs-5">
-                                                    {{ form.expiration_year }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">CSC <span class="text-danger">*</span></label>
-                                    <div class="col-md-8">
-                                        <div class="width-100 pull-left m-r-10">
-                                            {{ form.csc }}
-                                        </div>
-                                    </div>
-                                </div>
+<form method="post" action="{% url 'paymentconfirm' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="col-md-4 control-label">Cardholder Name <span class="text-danger">*</span></label>
+            <div class="col-md-4">
+                <input name="cardholder_name" type="text" required>
+            </div>
+        </div>
+        <div class="form-group">
+        <label class="col-md-4 control-label">Card Number <span class="text-danger">*</span></label>
+        <div class="col-md-4">
+            <div id="card-number-element"></div>
+        </div>
+        <div id="card-errors" role="alert" class="text-danger"></div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Expiration Date <span class="text-danger">*</span></label>
+            <div class="col-sm-8">
+                <div class="width-100">
+                    <div class="row row-space-0">
+                        <div class="col-xs-5">
+                            <input name="expiration_month" type="text" required>
+                        </div>
+                        <div class="col-xs-2 text-center">
+                            <div class="text-muted p-t-5 m-t-2">/</div>
+                        </div>
+                        <div class="col-xs-5">
+                            <input name="expiration_year" type="text" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-4 control-label">CSC <span class="text-danger">*</span></label>
+            <div class="col-md-8">
+                <div class="width-100 pull-left m-r-10">
+                    <input name="cvc" type="text" required>
+                </div>
+            </div>
+        </div>
                             </div>
                             <!-- END checkout-body -->
                             <!-- BEGIN checkout-footer -->
@@ -249,3 +245,38 @@
         </div>
         <!-- END #policy -->
 {% endblock content %}
+{% block js %}
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    var stripe = Stripe('pk_test_51NbRDuJaQDxnEDq2woVjnIDTvz2pMYdqGh23CHgRoR9fyqdNEBK9p8Y6zcev8K1TZEqRvUFHsAxsk9xq63tHNLPC00JRJfPIl2'); // Replace with your Stripe publishable key
+    var elements = stripe.elements();
+
+    // Create a Stripe Element for the card number
+    var cardNumberElement = elements.create('cardNumber');
+    cardNumberElement.mount('#card-number-element');
+
+    var form = document.getElementById('payment-form');
+    var submitButton = document.getElementById('submit');
+
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        submitButton.disabled = true;
+
+        // Validate the card number
+        stripe.createToken(cardNumberElement).then(function (result) {
+            if (result.error) {
+                // Display an error message to the user
+                var errorElement = document.getElementById('card-errors');
+                errorElement.textContent = result.error.message;
+                submitButton.disabled = false;
+            } else {
+                // The card number is valid, you can proceed with payment
+                // Submit the form to your server for further processing
+                // The card token is available in result.token
+                form.submit();
+            }
+        });
+    });
+</script>
+
+{% endblock js %}

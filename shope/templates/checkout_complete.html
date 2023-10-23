@@ -98,10 +98,12 @@
                                                     <div class="product-summary-img">
                                                         <img src="assets/img/iphone-6s-plus.png" alt="" />
                                                     </div>
+                                                    {% for cartitem in cart_items %}
                                                     <div class="product-summary-info">
-                                                        <div class="title">iPhone 6s Plus 16GB (Silver)</div>
+                                                        <div class="title">{{cartitem.title}}</div>
                                                         <div class="desc">Delivers Tue 26/04/2016 - Free</div>
                                                     </div>
+                                                    {% endfor %}
                                                 </td>
                                             </tr>
                                             <tr>

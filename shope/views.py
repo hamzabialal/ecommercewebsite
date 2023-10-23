@@ -14,7 +14,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-
+import stripe
+import json
+from django.conf import settings
 
 from .models import Product
 
@@ -112,16 +114,6 @@ class ContactTemplate(FormView):
 
 class CheckOutInfo(TemplateView):
     template_name = 'checkout_info.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['parent_categories'] = ParentCategory.objects.all()
-        context['categories'] = Category.objects.all()
-        return context
-
-
-class CheckOutComplete(TemplateView):
-    template_name = 'checkout_complete.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -443,8 +435,101 @@ class ShippingForm(FormView):
         form.save()
         return super().form_valid(form)
 
+STRIPE_PUBLISHABLE_KEY = 'pk_test_51NbRDuJaQDxnEDq2woVjnIDTvz2pMYdqGh23CHgRoR9fyqdNEBK9p8Y6zcev8K1TZEqRvUFHsAxsk9xq63tHNLPC00JRJfPIl2'
+
+
 class CheckOutPayment(TemplateView):
     template_name = 'checkout_payment.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        if self.request.user.is_authenticated:
+            user = self.request.user
+            cart = Cart.objects.filter(user=user, is_paid=False).first()
+
+            if cart is None:
+
+                return redirect('checkoutcart')
+
+            cart_items = CartItems.objects.filter(cart=cart)
+            cart_total = sum(item.product.discounted_price * item.quantity for item in cart_items)
+
+            order_total = cart_total
+
+            stripe.api_key = settings.STRIPE_SECRET_KEY
+
+            order_total = int(cart_total * 100)
+            intent = stripe.PaymentIntent.create(
+                amount=order_total,
+                currency='usd',
+                description="Example charge",
+            )
+
+            context['client_secret'] = intent.client_secret
+            context['cart_total'] = cart_total
+            stripe.Charge.create(
+                amount=order_total,
+                currency="usd",
+                source="tok_amex",
+                description="My First Test Charge (created for API docs at https://www.stripe.com/docs/api)",
+            )
+            stripe.Charge.retrieve(
+                "ch_3O4HevJaQDxnEDq20n3f7bRY",
+            )
+            stripe.Charge.modify(
+                "ch_3O4HevJaQDxnEDq20n3f7bRY",
+                metadata={"order_id": "6735"},
+            )
+
+        return context
+
+
+class PaymentConfirmationView(View):
+    template_name = 'checkout_complete.html'
+
+    def get(self, request):
+        cart_items = request.session.get('cart_items', [])
+        cart_total = sum(item.product.discounted_price * item.quantity for item in cart_items)
+
+        request.session['cart_items'] = []
+
+        context = {
+            'cart_items': cart_items,
+            'cart_total': cart_total,
+        }
+
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        user = self.request.user
+
+        if user.is_authenticated:
+            cart = Cart.objects.filter(user=user, is_paid=False).first()
+            if cart:
+                cart_items = CartItems.objects.filter(cart=cart)
+                cart_total = sum(item.product.discounted_price * item.quantity for item in cart_items)
+
+                request.session['cart_items'] = []
+
+                cart_items.delete()
+                cart.is_paid = True
+                cart.save()
+
+                messages.success(request, "Payment successful. Your cart is now empty")
+            else:
+                cart_items = []
+                cart_total = 0
+        else:
+            cart_items = []
+            cart_total = 0
+
+        context = {
+            'cart_items': cart_items,
+            'cart_total': cart_total,
+        }
+
+        return render(request, self.template_name, context)
 
 
 class CheckOutCart(TemplateView):
@@ -542,3 +627,7 @@ def remove_cart(request, cart_item_id):
         return redirect('checkoutcart')
     except CartItems.DoesNotExist:
         return HttpResponse("Cart item does not exist")
+
+
+def check_out(request):
+    pub_key = settings.STRIPE_PUBLISHABLE_KEY
