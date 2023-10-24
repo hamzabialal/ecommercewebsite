@@ -3,8 +3,9 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
-
+from django.contrib.auth.models import AbstractUser
 from django.db.models import Count
+from .manager import *
 
 
 import uuid
@@ -140,8 +141,14 @@ class Profile(models.Model):
     def get_cart_count(self):
         return self.user.cart_set.filter(is_paid=False).aggregate(cart_count=Count('cart_items'))['cart_count']
 
-
-
-
-
-
+#
+# class CustomUser(AbstractUser):
+#     username = None
+#     emails = models.EmailField(unique=True)
+#     phone_no = models.CharField(max_length=15, default='')
+#     is_phone_verified = models.BooleanField(default=False)
+#
+#     USERNAME_FIELD = 'email'
+#     REQUIRED_FIELDS = []
+#
+#

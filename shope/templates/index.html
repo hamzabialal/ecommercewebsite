@@ -182,13 +182,13 @@
                     <div class="col-md-2 col-sm-4">
                         <!-- BEGIN item -->
                         <div class="item item-thumbnail">
-                            <a href="{% url 'product_detail' product_name=item.title %}" class="item-image">
+                            <a href="{% url 'product_detail' product_name=item.slug %}" class="item-image">
                                 <img src="{{ item.image.url }}" alt="" />
                                 <div class="discount">{{ item.discount_percentage }} %OFF</div>
                             </a>
                             <div class="item-info">
                                 <h4 class="item-title">
-                                    <a href="{% url 'product_detail' product_name=item.title %}">{{ item.title }}</a>
+                                    <a href="{% url 'product_detail' product_name=item.slug %}">{{ item.title }}</a>
                                 </h4>
                                 <p class="item-desc">{{ item.description }}</p>
                                 <div class="item-price">${{ item.discounted_price }}</div>
@@ -225,7 +225,7 @@
                         <li class="list-header">Top Categories</li>
                         <li><a href="#">All Brands</a></li>
 
-                        {% for category in categories %}
+                        {% for category in phones_categories %}
                         <li><a href="/">{{ category.name }}</a></li>
                         {% endfor %}
                     </ul>
@@ -256,13 +256,13 @@
     <!-- BEGIN item -->
                                 {% for product in phones %}
                                 <div class="item item-thumbnail">
-                                    <a href="{% url 'product_detail' product_name=product.title %}" class="item-image">
+                                    <a href="{% url 'product_detail' product_name=product.slug %}" class="item-image">
                                         <img src="{{ product.image.url }}" alt="{{ product.title }}" />
                                         <div class="discount">{{product.discount_percentage}}%</div>
                                     </a>
                                     <div class="item-info">
                                         <h4 class="item-title">
-                                            <a href="{% url 'product_detail' product_name=product.title %}">{{ product.title }}</a>
+                                            <a href="{% url 'product_detail' product_name=product.slug %}">{{ product.title }}</a>
                                         </h4>
                                         <p class="item-desc">{{ product.description }}</p>
                                         <div class="item-price">${{ product.discounted_price }}</div>
@@ -305,13 +305,10 @@
                     <div class="category-sidebar">
                         <ul class="category-list">
                             <li class="list-header">Top Categories</li>
-                            <li><a href="#">Apple</a></li>
-                            <li><a href="#">HP</a></li>
-                            <li><a href="#">Huawei</a></li>
-                            <li><a href="#">Samsung</a></li>
-                            <li><a href="#">Sony</a></li>
-                            <li><a href="#">All Brands</a></li>
-                        </ul>
+                            {% for category in tablet_categories %}
+                            <li><a href="#">{{ category.name }}</a></li>
+                            {% endfor %}
+
                     </div>
                     <!-- END category-sidebar -->
                     <!-- BEGIN category-detail -->
@@ -338,13 +335,13 @@
 
                                 <div class="item item-thumbnail">
 
-                                    <a href="{% url 'product_detail' product_name=product.title %}" class="item-image">
+                                    <a href="{% url 'product_detail' product_name=product.slug %}" class="item-image">
                                         <img src="{{ product.image.url }}" alt="{{ product.title }}" />
                                         <div class="discount">{{product.discount_percentage}} %OFF</div>
                                     </a>
                                     <div class="item-info">
                                         <h4 class="item-title">
-                                            <a href="{% url 'product_detail' product_name=product.title %}">{{ product.title }}</a>
+                                            <a href="{% url 'product_detail' product_name=product.slug %}">{{ product.title }}</a>
                                         </h4>
                                         <p class="item-desc">{{ product.description }}</p>
                                         <div class="item-price">${{ product.discounted_price }}</div>

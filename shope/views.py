@@ -38,6 +38,7 @@ class Header(ListView):
         print("get_context_data is called")
 
         context['parent_categories'] = ParentCategory.objects.all()
+
         return context
 
 
@@ -53,10 +54,15 @@ class HomeTemplate(ListView):
 
         context['featured_products'] = Product.objects.filter(is_featured=True)
 
-        context['categories'] = Category.objects.all()
 
         parent_category_phones = ParentCategory.objects.filter(name='Phones').first()
         parent_category_tablets = ParentCategory.objects.filter(name='Tablets').first()
+
+        if parent_category_phones:
+            # Get categories that have 'Tablets' as their parent_category
+            phones_categories = Category.objects.filter(parent_category=parent_category_phones, is_active=True)
+        else:
+            phones_categories = []
 
         context['phones'] = Product.objects.filter(
             parent__parent_category=parent_category_phones) if parent_category_phones else []
@@ -76,6 +82,16 @@ class HomeTemplate(ListView):
             cart_items = []
 
         context['cart_items'] = cart_items
+
+        if parent_category_tablets:
+            # Get categories that have 'Tablets' as their parent_category
+            tablet_categories = Category.objects.filter(parent_category=parent_category_tablets, is_active=True)
+        else:
+            tablet_categories = []
+
+        context['tablet_categories'] = tablet_categories
+        context['phones_categories'] = phones_categories
+
 
         return context
 
@@ -161,7 +177,7 @@ class ProductDetail(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         product_name = kwargs['product_name']
-        product = get_object_or_404(Product, title=product_name)
+        product = get_object_or_404(Product, slug=product_name)
         context['product'] = product
         context['featured_products'] = Product.objects.filter(is_featured=True)
         context['parent_categories'] = ParentCategory.objects.all()

@@ -26,6 +26,7 @@ SECRET_KEY = 'django-insecure-hk*nuodyl%%px!=y58ab00zr^@d_8vcvlw1+lql@ggrkzovp(_
 DEBUG = True
 
 ALLOWED_HOSTS = []
+#AUTH_USER_MODEL = 'shope.CustomUser'
 
 
 # Application definition
