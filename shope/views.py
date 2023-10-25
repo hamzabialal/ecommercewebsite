@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.views import View
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
-from .models import Product, Category, ParentCategory, Cart, CartItems
+from .models import Product, Category, ParentCategory, Cart, CartItems, Reviews
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.shortcuts import redirect
@@ -182,6 +182,8 @@ class ProductDetail(TemplateView):
         context['featured_products'] = Product.objects.filter(is_featured=True)
         context['parent_categories'] = ParentCategory.objects.all()
         context['categories'] = Category.objects.all()
+        context['reviews'] = Reviews.objects.filter(product=product)
+        context['review_form'] = SignUpForm()
         return context
 
 

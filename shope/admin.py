@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ContactUs,CheckoutCart, ShippingAddress, Product, ProductImage, Category, ProductDescription, ParentCategory,Cart, CartItems, Profile
+from .models import ContactUs,CheckoutCart,Reviews, ShippingAddress, Product, ProductImage, Category, ProductDescription, ParentCategory,Cart, CartItems, Profile
 
 
 @admin.register(ContactUs)
@@ -49,3 +49,9 @@ class ProfileAdmin(admin.ModelAdmin):
 @admin.register(ShippingAddress)
 class ShippingAddressAdmin(admin.ModelAdmin):
     list_display = ['id', 'first_name', 'last_name', 'comp_name', 'area_code', 'phone', 'address', 'zip_code', 'busines_address']
+
+
+@admin.register(Reviews)
+class ReviewsAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'product', 'review', 'rating', 'created_at']
+

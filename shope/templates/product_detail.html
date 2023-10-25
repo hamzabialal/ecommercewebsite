@@ -260,7 +260,9 @@
                                     <!-- BEGIN col-7 -->
                                     <div class="col-md-7">
                                         <!-- BEGIN review -->
+
                                         <div class="review">
+                                            {% for review in reviews %}
                                             <div class="review-info">
                                                 <div class="review-icon"><img src="assets/img/user-1.jpg" alt="" /></div>
                                                 <div class="review-rate">
@@ -271,119 +273,25 @@
                                                         <li class="active"><i class="fa fa-star"></i></li>
                                                         <li class=""><i class="fa fa-star-o"></i></li>
                                                     </ul>
-                                                    (4/5)
+                                                    ({{review.rating}}/5)
                                                 </div>
-                                                <div class="review-name">Terry</div>
-                                                <div class="review-date">24/05/2016 7:40am</div>
+                                                <div class="review-name">{{review.user}}</div>
+                                                <div class="review-date">{{review.created_at}}</div>
                                             </div>
                                             <div class="review-title">
-                                                What does “SIM-free” mean?
+                                                {{review.title}}
                                             </div>                        
                                             <div class="review-message">
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi in imperdiet augue. Integer non aliquam eros. Cras vehicula nec sapien pretium sagittis. Pellentesque feugiat lectus non malesuada aliquam. Etiam id tortor pretium, dictum leo at, malesuada tortor.
+                                                {{review.review}}
                                             </div>
+                                            {% endfor %}
                                         </div>
                                         <!-- END review -->
                                         <!-- BEGIN review -->
-                                        <div class="review">
-                                            <div class="review-info">
-                                                <div class="review-icon"><img src="assets/img/user-2.jpg" alt="" /></div>
-                                                <div class="review-rate">
-                                                    <ul class="review-star">
-                                                        <li class="active"><i class="fa fa-star"></i></li>
-                                                        <li class="active"><i class="fa fa-star"></i></li>
-                                                        <li class="active"><i class="fa fa-star"></i></li>
-                                                        <li class=""><i class="fa fa-star-o"></i></li>
-                                                        <li class=""><i class="fa fa-star-o"></i></li>
-                                                    </ul>
-                                                    (3/5)
-                                                </div>
-                                                <div class="review-name">George</div>
-                                                <div class="review-date">24/05/2016 8:40am</div>
-                                            </div>                     
-                                            <div class="review-title">
-                                                When I buy iPhone from apple.com, is it tied to a carrier or does it come “unlocked”?
-                                            </div>                
-                                            <div class="review-message">
-                                                In mauris leo, maximus at pellentesque vel, pharetra vel risus. Aenean in semper velit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi volutpat mattis neque, at molestie tellus ultricies quis. Ut lobortis odio nec nunc ullamcorper, vitae faucibus augue semper. Sed luctus lobortis nulla ac volutpat. Mauris blandit scelerisque sem.
-                                            </div>
-                                        </div>
-                                        <!-- END review -->
+
+
                                         <!-- BEGIN review -->
-                                        <div class="review">
-                                            <div class="review-info">
-                                                <div class="review-icon"><img src="assets/img/user-3.jpg" alt="" /></div>
-                                                <div class="review-rate">
-                                                    <ul class="review-star">
-                                                        <li class="active"><i class="fa fa-star"></i></li>
-                                                        <li class="active"><i class="fa fa-star"></i></li>
-                                                        <li class="active"><i class="fa fa-star"></i></li>
-                                                        <li class="active"><i class="fa fa-star"></i></li>
-                                                        <li class="active"><i class="fa fa-star"></i></li>
-                                                    </ul>
-                                                    (5/5)
-                                                </div>
-                                                <div class="review-name">Steve</div>
-                                                <div class="review-date">23/05/2016 8:40am</div>
-                                            </div>                     
-                                            <div class="review-title">
-                                                Where is the iPhone Upgrade Program available?
-                                            </div>                
-                                            <div class="review-message">
-                                                Duis ut nunc sem. Integer efficitur, justo sit amet feugiat hendrerit, arcu nisl elementum dui, in ultricies erat quam at mauris. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Donec nec ultrices tellus. Mauris elementum venenatis volutpat.
-                                            </div>
-                                        </div>
-                                        <!-- END review -->
-                                        <!-- BEGIN review -->
-                                        <div class="review">
-                                            <div class="review-info">
-                                                <div class="review-icon"><img src="assets/img/user-4.jpg" alt="" /></div>
-                                                <div class="review-rate">
-                                                    <ul class="review-star">
-                                                        <li class="active"><i class="fa fa-star"></i></li>
-                                                        <li class="active"><i class="fa fa-star"></i></li>
-                                                        <li class=""><i class="fa fa-star-o"></i></li>
-                                                        <li class=""><i class="fa fa-star-o"></i></li>
-                                                        <li class=""><i class="fa fa-star-o"></i></li>
-                                                    </ul>
-                                                    (2/5)
-                                                </div>
-                                                <div class="review-name">Alfred</div>
-                                                <div class="review-date">23/05/2016 10.02am</div>
-                                            </div>                     
-                                            <div class="review-title">
-                                                Can I keep my current service plan if I choose the iPhone Upgrade Program?
-                                            </div>                
-                                            <div class="review-message">
-                                                Donec vel fermentum quam. Vivamus scelerisque enim eget tristique auctor. Vivamus tempus, turpis iaculis tempus egestas, leo augue hendrerit tellus, et efficitur neque massa at neque. Aenean efficitur eleifend orci at ornare.
-                                            </div>
-                                        </div>
-                                        <!-- END review -->
-                                        <!-- BEGIN review -->
-                                        <div class="review">
-                                            <div class="review-info">
-                                                <div class="review-icon"><img src="assets/img/user-5.jpg" alt="" /></div>
-                                                <div class="review-rate">
-                                                    <ul class="review-star">
-                                                        <li class="active"><i class="fa fa-star"></i></li>
-                                                        <li class="active"><i class="fa fa-star"></i></li>
-                                                        <li class="active"><i class="fa fa-star"></i></li>
-                                                        <li class="active"><i class="fa fa-star"></i></li>
-                                                        <li class="active"><i class="fa fa-star"></i></li>
-                                                    </ul>
-                                                    (5/5)
-                                                </div>
-                                                <div class="review-name">Edward</div>
-                                                <div class="review-date">22/05/2016 9.30pm</div>
-                                            </div>                     
-                                            <div class="review-title">
-                                                I have an existing carrier contract or installment plan. Can I purchase with the iPhone Upgrade Program
-                                            </div>                
-                                            <div class="review-message">
-                                                Aliquam consequat ut turpis non interdum. Integer blandit erat nec sapien sollicitudin, a fermentum dui venenatis. Nullam consequat at enim et aliquet. Cras mattis turpis quis eros volutpat tristique vel a ligula. Proin aliquet leo mi, et euismod metus placerat sit amet.
-                                            </div>
-                                        </div>
-                                        <!-- END review -->
+
                                     </div>
                                     <!-- END col-7 -->
                                     <!-- BEGIN col-5 -->

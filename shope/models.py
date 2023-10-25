@@ -150,5 +150,15 @@ class Profile(models.Model):
 #
 #     USERNAME_FIELD = 'email'
 #     REQUIRED_FIELDS = []
+
 #
 #
+
+
+class Reviews(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
+    title = models.CharField(max_length=100)
+    review = models.TextField()
+    rating = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)

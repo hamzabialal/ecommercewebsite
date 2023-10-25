@@ -1,6 +1,6 @@
 from django import forms
 import stripe
-from .models import ContactUs, Product, ProductImage,ShippingAddress
+from .models import ContactUs, Product, ProductImage,ShippingAddress, Reviews
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.forms import inlineformset_factory
@@ -78,6 +78,14 @@ class NewUserForm(UserCreationForm):
             user.save()
         return user
 
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Reviews
+        fields = ['review', 'rating', 'title', 'product']
+        widgets = {
+            'review': forms.Textarea(attrs={'class': 'form-control', 'rows': 10, 'placeholder': 'Message'}),
+        }
 
 
 
