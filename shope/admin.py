@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ContactUs,CheckoutCart,Reviews, ShippingAddress, Product, ProductImage, Category, ProductDescription, ParentCategory,Cart, CartItems, Profile
+from .models import ContactUs,OrderTracker, Variation,AddititonalInformation, Reviews, ShippingAddress, Product, ProductImage, Category, ProductDescription, ParentCategory,Cart, CartItems, Profile
 
 
 @admin.register(ContactUs)
@@ -54,4 +54,19 @@ class ShippingAddressAdmin(admin.ModelAdmin):
 @admin.register(Reviews)
 class ReviewsAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'product', 'review', 'rating', 'created_at']
+
+
+@admin.register(AddititonalInformation)
+class AddititonalInformationAdmin(admin.ModelAdmin):
+    list_display = ['id', 'title', 'main_title', 'description']
+
+
+@admin.register(Variation)
+class VariationAdmin(admin.ModelAdmin):
+    list_display = ['id', 'title', 'main_title', 'description']
+
+
+@admin.register(OrderTracker)
+class OrderTrackerAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'delivered','tracking_id']
 

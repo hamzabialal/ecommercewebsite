@@ -1,9 +1,10 @@
 from django import forms
 import stripe
-from .models import ContactUs, Product, ProductImage,ShippingAddress, Reviews
+from .models import ContactUs, Product, ProductImage,ShippingAddress, Reviews, Profile
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.forms import inlineformset_factory
+
 
 class ContactForm(forms.ModelForm):
     class Meta:
@@ -15,6 +16,8 @@ class ContactForm(forms.ModelForm):
             'subject': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Subject'}),
             'message': forms.Textarea(attrs={'class': 'form-control', 'rows': 10, 'placeholder': 'Message'}),
         }
+
+
 class SignUpForm(UserCreationForm):
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
@@ -29,9 +32,12 @@ class SignUpForm(UserCreationForm):
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
         }
 
+
 class LoginForm(AuthenticationForm):
     username = forms.CharField(max_length=30 , widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control'}))
     password = forms.CharField(max_length=70 , widget=forms.PasswordInput(attrs={'autofocus': True, 'class': 'form-control'}))
+
+
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
@@ -55,10 +61,10 @@ class ShippingAddressForm(forms.ModelForm):
         fields = '__all__'
 
 
-
 class ExpirationDateForm(forms.Form):
     expiration_month = forms.ChoiceField(choices=[(str(month), month) for month in range(1, 13)])
     expiration_year = forms.ChoiceField(choices=[(str(year), year) for year in range(22, 31)])  # Adjust the range as needed
+
 
 class NewUserForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -87,5 +93,10 @@ class ReviewForm(forms.ModelForm):
             'review': forms.Textarea(attrs={'class': 'form-control', 'rows': 10, 'placeholder': 'Message'}),
         }
 
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = '__all__'
 
 

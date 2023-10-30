@@ -11,7 +11,7 @@ urlpatterns = [
     path('paymentconfirm/', views.PaymentConfirmationView.as_view(), name='paymentconfirm'),
     path('checkoutcart/', views.CheckOutCart.as_view(), name='checkoutcart'),
     path('aboutus/', views.AboutUs.as_view(), name='aboutus'),
-    path('myaccount/', views.MyAccount.as_view(), name='myaccount'),
+    #path('myaccount/', views.MyAccount.as_view(), name='myaccount'),
     path('products/<str:category_name>/', views.Products.as_view(), name='products'),
     path('productdetail/', views.ProductDetail.as_view(), name='product_detail'),
     path('searchresults/', views.SearchView.as_view(), name='search_results'),
@@ -36,11 +36,13 @@ urlpatterns = [
     path('arrivalproducts/', views.ArrivalProducts.as_view(), name= 'arrivalproducts'),
     path('applewatch/', views.AppleWatch.as_view(), name= 'applewatch'),
     # ... other URL patterns ...
-    path('mybackend/', views.get_item_details, name='get_item_details'),
+    # path('mybackend/', views.get_item_details, name='get_item_details'),
     path('add_to_cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
     path('myprofile/', views.UserProfileView.as_view(), name='user_profile'),
     path('remove_from_cart/<int:cart_item_id>/', views.remove_cart, name='remove_from_cart'),
-
+    path('profile/', views.ProfileForms.as_view(), name='profile'),
+    path('ordertracker/', views.OrderTackeing.as_view(), name='ordertracker'),
+    path('categoryproduct/<str:category_name>/', views.CategoryPage.as_view(), name='category_products'),
 
                   path('', views.HomeTemplate.as_view(), name='home_template'),
 

@@ -31,6 +31,11 @@ class Category(models.Model):
     description = models.TextField()
     parent_category = models.ForeignKey(ParentCategory, on_delete=models.CASCADE, related_name='parent_category', null=True, blank=True)
     is_active = models.BooleanField(default=True)
+    slug = models.SlugField(unique=True, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Category, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -49,12 +54,12 @@ class Product(models.Model):
     is_active = models.BooleanField(default=True)
     parent = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name="products", null=True, blank=True)
-    discount_percentage = models.DecimalField(max_digits=10, decimal_places=0,default=0)
+    discount_percentage = models.DecimalField(max_digits=10, decimal_places=0, default=0)
     is_featured = models.BooleanField(default=True)
     arrival = models.BooleanField(default='')
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.title)  # Use self.title, not self.product_name
+        self.slug = slugify(self.title)
         super(Product, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -120,10 +125,10 @@ class CreateCard(models.Model):
     CSV = models.IntegerField()
 
 
-class WishList(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
+# class WishList(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+#     created_at = models.DateTimeField(auto_now_add=True)
 
 
 class CartItems(models.Model):
@@ -135,8 +140,6 @@ class CartItems(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     profile_image = models.ImageField(upload_to='profile')
-
-
 
     def get_cart_count(self):
         return self.user.cart_set.filter(is_paid=False).aggregate(cart_count=Count('cart_items'))['cart_count']
@@ -162,3 +165,25 @@ class Reviews(models.Model):
     review = models.TextField()
     rating = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class AddititonalInformation(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='additional_information')
+    main_title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+
+
+class Variation(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='variation')
+    main_title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+
+
+class OrderTracker(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='order_tracker')
+    delivered = models.BooleanField(default=False)
+    tracking_id = models.CharField(max_length=100)
+
+

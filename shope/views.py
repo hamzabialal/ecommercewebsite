@@ -1,28 +1,21 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, FormView, ListView
-from .forms import ContactForm, SignUpForm, LoginForm, ProductForm,ShippingAddressForm
+from .forms import ContactForm, SignUpForm, LoginForm, ProductForm, ShippingAddressForm, ProfileForm
 from django.contrib import messages
 from django.views import View
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
-from .models import Product, Category, ParentCategory, Cart, CartItems, Reviews
+from .models import Category, ParentCategory, Cart, CartItems, Reviews, OrderTracker
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.shortcuts import redirect
-from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse
-from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
 import stripe
-import json
 from django.conf import settings
-
 from .models import Product
-
-
-
 # Create your views here.
+
 
 class Header(ListView):
     template_name = 'home.html'
@@ -53,13 +46,11 @@ class HomeTemplate(ListView):
         context = super().get_context_data(**kwargs)
 
         context['featured_products'] = Product.objects.filter(is_featured=True)
-
-
         parent_category_phones = ParentCategory.objects.filter(name='Phones').first()
+
         parent_category_tablets = ParentCategory.objects.filter(name='Tablets').first()
 
         if parent_category_phones:
-            # Get categories that have 'Tablets' as their parent_category
             phones_categories = Category.objects.filter(parent_category=parent_category_phones, is_active=True)
         else:
             phones_categories = []
@@ -68,9 +59,6 @@ class HomeTemplate(ListView):
             parent__parent_category=parent_category_phones) if parent_category_phones else []
         context['tablets'] = Product.objects.filter(
             parent__parent_category=parent_category_tablets) if parent_category_tablets else []
-
-        context['parent_categories'] = ParentCategory.objects.all()
-
         user = self.request.user
         if user.is_authenticated:
             cart = Cart.objects.filter(user=user, is_paid=False).first()
@@ -84,16 +72,16 @@ class HomeTemplate(ListView):
         context['cart_items'] = cart_items
 
         if parent_category_tablets:
-            # Get categories that have 'Tablets' as their parent_category
             tablet_categories = Category.objects.filter(parent_category=parent_category_tablets, is_active=True)
         else:
             tablet_categories = []
-
+        context['parent_categories'] = ParentCategory.objects.all()
+        context['categories'] = Category.objects.all()
+        print('It is Checkout:', context['parent_categories'])
         context['tablet_categories'] = tablet_categories
         context['phones_categories'] = phones_categories
-
-
         return context
+
 
 class FaQsTemplate(ListView):
     template_name = 'faq.html'
@@ -115,11 +103,8 @@ class ContactTemplate(FormView):
     success_url = '/'
 
     def form_valid(self, form):
-        # Handle form submission
         form.save()
         return super().form_valid(form)
-
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -151,10 +136,6 @@ class AboutUs(TemplateView):
         return context
 
 
-class MyAccount(TemplateView):
-    template_name = 'my_account.html'
-
-
 class Products(ListView):
     template_name = 'product.html'
     model = Product
@@ -184,6 +165,7 @@ class ProductDetail(TemplateView):
         context['categories'] = Category.objects.all()
         context['reviews'] = Reviews.objects.filter(product=product)
         context['review_form'] = SignUpForm()
+        context['additional_information'] = product.additional_information.all()
         return context
 
 
@@ -279,7 +261,7 @@ class RegisterForm(FormView):
     success_url = '/products/'
 
     def form_valid(self, form):
-        user = form.save()
+        form.save()
         messages.add_message(self.request, messages.SUCCESS, "Congrats")
         return super().form_valid(form)
 
@@ -312,8 +294,8 @@ class AddProduct(FormView):
     success_url = '/products/'
 
     def form_valid(self, form):
-            form.save()
-            return super().form_valid(form)
+        form.save()
+        return super().form_valid(form)
 
 
 class IphoneSe(ListView):
@@ -421,10 +403,12 @@ class CategoryUrl(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         category_name = kwargs['category_name']
-        category = get_object_or_404(Category, name=category_name)
+        category = get_object_or_404(Category, slug=category_name)
         products = Product.objects.filter(parent=category)
         context['category'] = category
         context['products'] = products
+        context['categories'] = Category.objects.all()
+        context['parent_categories'] = ParentCategory.objects.all()
         return context
 
 
@@ -449,11 +433,8 @@ class ShippingForm(FormView):
     success_url = '/checkoutpayment/'
 
     def form_valid(self, form):
-        # Handle form submission
         form.save()
         return super().form_valid(form)
-
-STRIPE_PUBLISHABLE_KEY = 'pk_test_51NbRDuJaQDxnEDq2woVjnIDTvz2pMYdqGh23CHgRoR9fyqdNEBK9p8Y6zcev8K1TZEqRvUFHsAxsk9xq63tHNLPC00JRJfPIl2'
 
 
 class CheckOutPayment(TemplateView):
@@ -472,8 +453,6 @@ class CheckOutPayment(TemplateView):
 
             cart_items = CartItems.objects.filter(cart=cart)
             cart_total = sum(item.product.discounted_price * item.quantity for item in cart_items)
-
-            order_total = cart_total
 
             stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -577,21 +556,18 @@ class CheckOutCart(TemplateView):
         return context
 
 
-def get_item_details(request):
-    item_id = request.GET.get('itemId')
-    try:
-        product = Product.objects.get(id=item_id)
-        item_data = {
-            'name': product.title,
-            'price': str(product.price),
-            'image': product.image.url,
-        }
-        return JsonResponse(item_data)
-    except Product.DoesNotExist:
-        return JsonResponse({'name': 'Item Not Found', 'price': '$Item Price', 'image': 'default-image.jpg'})
-
-
-
+# def get_item_details(request):
+#     item_id = request.GET.get('itemId')
+#     try:
+#         product = Product.objects.get(id=item_id)
+#         item_data = {
+#             'name': product.title,
+#             'price': str(product.price),
+#             'image': product.image.url,
+#         }
+#         return JsonResponse(item_data)
+#     except Product.DoesNotExist:
+#         return JsonResponse({'name': 'Item Not Found', 'price': '$Item Price', 'image': 'default-image.jpg'})
 
 def add_to_cart(request, product_id):
     user = request.user
@@ -606,6 +582,7 @@ def add_to_cart(request, product_id):
         cart_item.save()
 
     return HttpResponseRedirect(reverse('applewatch'))
+
 
 def get_cart_count(self):
     count = CartItems.objects.filter(cart__is_paid=False, cart__user=self.user).count()
@@ -625,17 +602,42 @@ class UserProfileView(LoginRequiredMixin, TemplateView):
         context['cart_count'] = cart_count
         return context
 
-@csrf_exempt
-def remove_from_cart(request):
-    if request.method == "POST" and request.is_ajax():
-        item_id = request.POST.get("item_id")
-        try:
-            cart_item = CartItems.objects.get(id=item_id)
-            cart_item.delete()
-            return JsonResponse({"success": True})
-        except CartItems.DoesNotExist:
-            return JsonResponse({"success": False})
-    return JsonResponse({"success": False})
+
+class ProfileForms(FormView):
+    template_name = 'profile.html'
+    form_class = ProfileForm
+    success_url = '/products/'
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+
+class OrderTackeing(ListView):
+    template_name = 'OrderTackeing.html'
+    model = OrderTracker
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['order_tracker'] = OrderTracker.objects.all()
+        return context
+
+
+class CategoryPage(ListView):
+    template_name = 'product.html'
+    model = Product
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category_name = self.kwargs['category_name']
+        parent_category = get_object_or_404(Category, name=category_name)
+        products = Product.objects.filter(parent=parent_category)
+        context['category'] = parent_category
+        context['products'] = products
+        context['categories'] = Category.objects.all()
+        context['parent_categories'] = ParentCategory.objects.all()
+        return context
+
 
 def remove_cart(request, cart_item_id):
     print("Cart item ID:", cart_item_id)
@@ -645,7 +647,3 @@ def remove_cart(request, cart_item_id):
         return redirect('checkoutcart')
     except CartItems.DoesNotExist:
         return HttpResponse("Cart item does not exist")
-
-
-def check_out(request):
-    pub_key = settings.STRIPE_PUBLISHABLE_KEY
