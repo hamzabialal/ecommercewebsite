@@ -39,12 +39,11 @@ urlpatterns = [
     # path('mybackend/', views.get_item_details, name='get_item_details'),
     path('add_to_cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
     path('myprofile/', views.UserProfileView.as_view(), name='user_profile'),
-    path('remove_from_cart/<int:cart_item_id>/', views.remove_cart, name='remove_from_cart'),
     path('profile/', views.ProfileForms.as_view(), name='profile'),
     path('ordertracker/', views.OrderTackeing.as_view(), name='ordertracker'),
     path('categoryproduct/<str:category_name>/', views.CategoryPage.as_view(), name='category_products'),
+    path('remove_from_cart/<int:product_id>/', views.delete_cart_item, name='remove_from_cart'),
+    path('query/',views.query_response, name='query_response'),
 
                   path('', views.HomeTemplate.as_view(), name='home_template'),
-
-
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

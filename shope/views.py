@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, FormView, ListView
+from rest_framework import status
+
 from .forms import ContactForm, SignUpForm, LoginForm, ProductForm, ShippingAddressForm, ProfileForm
 from django.contrib import messages
 from django.views import View
@@ -258,7 +260,7 @@ class Gadget(TemplateView):
 class RegisterForm(FormView):
     template_name = 'register.html'
     form_class = SignUpForm
-    success_url = '/products/'
+    success_url = '/iphonese/'
 
     def form_valid(self, form):
         form.save()
@@ -639,11 +641,60 @@ class CategoryPage(ListView):
         return context
 
 
-def remove_cart(request, cart_item_id):
-    print("Cart item ID:", cart_item_id)
+def delete_cart_item(request, product_id):
+    # Assuming CartItems is the model that represents items in the cart
+    cart_item = get_object_or_404(CartItems, product__id=product_id, cart__user=request.user, cart__is_paid=False)
+    cart_item.delete()
+    return redirect('/')
+
+# views.py
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+import pandas as pd
+import numpy as np
+import re
+import pickle
+import random
+# import torch
+
+from sentence_transformers import SentenceTransformer, util
+from sklearn.metrics.pairwise import cosine_similarity
+
+
+model = SentenceTransformer('stsb-distilroberta-base-v2')
+
+# Load question embeddings
+df = pd.read_csv('shope/cleaned_df.csv')
+qn_embeddings = pickle.load(open('shope/distilroberta-embedding.pkl', 'rb'))
+
+
+@api_view(['POST'])
+def query_response(request):
     try:
-        cart_item = CartItems.objects.get(id=cart_item_id)
-        cart_item.delete()
-        return redirect('checkoutcart')
-    except CartItems.DoesNotExist:
-        return HttpResponse("Cart item does not exist")
+        data = request.data
+        query = data.get('query', '')
+
+        if query:
+            # Pre-process query
+            query = re.sub(r'[^A-Za-z0-9\s]', ' ', query.lower())
+
+            # Encode the query to get embeddings
+            query_embeddings = model.encode(query).reshape(1, -1)
+
+            # Compute similarity
+            cosine_sim = cosine_similarity(qn_embeddings, query_embeddings)
+            cosine_sim = [(idx, item) for idx, item in enumerate(cosine_sim)]
+            sim_scores = sorted(cosine_sim, key=lambda x: x[1], reverse=True)
+
+            # Get the index of the most similar question
+            top_score = sim_scores[0]
+            qn_index = top_score[0]
+
+            # Get the corresponding answer
+            response = df['answer'].iloc[qn_index]
+
+            return Response({'response': response})
+        else:
+            return Response({'detail': 'Query is missing or empty'}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)

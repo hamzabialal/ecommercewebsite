@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-hk*nuodyl%%px!=y58ab00zr^@d_8vcvlw1+lql@ggrkzovp(_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost:1233', 'd422-119-73-103-185.ngrok-free.app', '127.0.0.1', 'docker.for.mac.localhost','ea33-2406-d00-aaaa-1464-6c50-1705-55f1-8f83.ngrok-free.app', '*']
 #AUTH_USER_MODEL = 'shope.CustomUser'
 
 
@@ -129,6 +129,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 import os
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+csv_file_path = os.path.join(BASE_DIR, 'shope', 'cleaned_df.csv')
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 STRIPE_SECRET_KEY = 'sk_test_51NbRDuJaQDxnEDq2oLErt4KUIWEI0lIR1sox0WgXODFME0ufUbZGQesDALq3ru698PiE5zvIlSsgcP37EFZDQhVS00DuQeqx9b'
 STRIPE_PUBLISHABLE_KEY = 'pk_test_51NbRDuJaQDxnEDq2woVjnIDTvz2pMYdqGh23CHgRoR9fyqdNEBK9p8Y6zcev8K1TZEqRvUFHsAxsk9xq63tHNLPC00JRJfPIl2'
