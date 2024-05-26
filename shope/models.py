@@ -169,16 +169,15 @@ class Reviews(models.Model):
 
 class AddititonalInformation(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='additional_information')
-    main_title = models.CharField(max_length=100)
+    main_title = models.CharField(max_length=100, blank=True)
+    main_title1 = models.CharField(max_length=100 , default='', blank=True)
     title = models.CharField(max_length=100)
-    description = models.TextField()
+    description1 = models.TextField(default='')
+    description2 = models.TextField(default='')
 
 
-class Variation(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='variation')
-    main_title = models.CharField(max_length=100)
-    title = models.CharField(max_length=100)
-    description = models.TextField()
+
+
 
 
 class OrderTracker(models.Model):
