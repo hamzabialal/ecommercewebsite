@@ -651,10 +651,8 @@ def delete_cart_item(request, product_id):
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import pandas as pd
-import numpy as np
 import re
 import pickle
-import random
 # import torch
 
 from sentence_transformers import SentenceTransformer, util

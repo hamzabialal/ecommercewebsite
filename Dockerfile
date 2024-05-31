@@ -2,7 +2,6 @@
 FROM python:3.10
 
 # Set environment variables
-ENV PYTHONUNBUFFERED=1
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
